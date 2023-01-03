@@ -6,8 +6,13 @@
 #define ITAI_CHESS_QUEEN_H
 
 
-class Queen {
+#include <string>
+#include "Piece.h"
 
+class Queen : public Piece{
+public:
+    Queen(std::string start, bool white);
+    bool canMoveGeo(std::string next_position) override;
 };
 
 

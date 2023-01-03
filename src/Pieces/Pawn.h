@@ -11,7 +11,8 @@
 
 class Pawn : public Piece{
 public:
-    virtual bool canMoveGeo(std::string next_position) override;
+    Pawn(std::string start, bool white);
+    bool canMoveGeo(std::string next_position) override;
 };
 
 

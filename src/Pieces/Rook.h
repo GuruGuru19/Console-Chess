@@ -5,9 +5,13 @@
 #ifndef ITAI_CHESS_ROOK_H
 #define ITAI_CHESS_ROOK_H
 
+#include <string>
+#include "Piece.h"
 
-class Rook {
-
+class Rook : public Piece{
+public:
+    Rook(std::string start, bool white);
+    bool canMoveGeo(std::string next_position) override;
 };
 
 

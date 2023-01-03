@@ -12,6 +12,7 @@ class Piece {
 protected:
     char mark;
     std::string position;
+    bool white;
 public:
     virtual bool canMoveGeo(std::string next_position) = 0;
     bool move(std::string next_position);

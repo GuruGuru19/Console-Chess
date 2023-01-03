@@ -6,8 +6,13 @@
 #define ITAI_CHESS_BISHOP_H
 
 
-class Bishop {
+#include <string>
+#include "Piece.h"
 
+class Bishop : public Piece{
+public:
+    Bishop(std::string start, bool white);
+    bool canMoveGeo(std::string next_position) override;
 };
 
 

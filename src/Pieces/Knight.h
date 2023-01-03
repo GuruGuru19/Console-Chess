@@ -6,8 +6,12 @@
 #define ITAI_CHESS_KNIGHT_H
 
 
-class Knight {
+#include "Piece.h"
 
+class Knight : public Piece{
+public:
+    Knight(std::string start, bool white);
+    bool canMoveGeo(std::string next_position) override;
 };
 
 

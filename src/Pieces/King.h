@@ -5,9 +5,13 @@
 #ifndef ITAI_CHESS_KING_H
 #define ITAI_CHESS_KING_H
 
+#include <string>
+#include "Piece.h"
 
-class King {
-
+class King : public Piece{
+public:
+    King(std::string start, bool white);
+    bool canMoveGeo(std::string next_position) override;
 };
 
 
