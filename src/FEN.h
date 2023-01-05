@@ -25,6 +25,7 @@ private:
     int fullmoveNumber;
 public:
     FEN(std::string str);
+    FEN(FEN & other);
 
     std::string getPositions(){
         return this->positions;

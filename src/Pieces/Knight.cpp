@@ -16,3 +16,4 @@ bool Knight::canMoveGeo(std::string next_position) {
 
     return (x_move_size == 1 && y_move_size == 2) || (x_move_size == 2 && y_move_size == 1);
 }
+

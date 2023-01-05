@@ -16,3 +16,7 @@ bool Rook::canMoveGeo(std::string next_position) {
 
     return (x_move_size > 0 && y_move_size == 0) || (x_move_size == 0 && y_move_size > 0);
 }
+
+std::string Rook::getPath(std::string next_position) {
+    //TODO
+}

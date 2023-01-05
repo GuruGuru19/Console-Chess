@@ -19,3 +19,7 @@ bool Queen::canMoveGeo(std::string next_position) {
 
     return bishop_logic && rook_logic;
 }
+
+std::string Queen::getPath(std::string next_position) {
+    //TODO
+}

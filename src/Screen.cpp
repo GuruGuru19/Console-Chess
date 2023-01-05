@@ -16,9 +16,6 @@ const std::string Screen::RED_BACK = "41";
 const std::string Screen::DARK_BACK = GREEN_BACK;
 const std::string Screen::LIGHT_BACK = BLUE_BACK;
 
-Screen::Screen() {
-
-}
 
 std::string Screen::buildBoardString(FEN & fen) {
     std::string str = "";

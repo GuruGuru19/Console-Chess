@@ -11,7 +11,3 @@ bool Piece::move(std::string next_position) {
     this->position = next_position;
     return true;
 }
-
-bool Piece::isWhite() {
-    return this->white;
-}

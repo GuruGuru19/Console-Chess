@@ -70,3 +70,19 @@ FEN::FEN(std::string str) { // assumes the str is valid
     this->fullmoveNumber = std::stoi(fullmove_number);
 }
 
+FEN::FEN(FEN &other) {
+    this->positions = other.positions;
+
+    this->activeColor = other.activeColor;
+
+    this->white_oo_castling = other.white_oo_castling;
+    this->white_ooo_castling = other.white_ooo_castling;
+    this->black_oo_castling = other.black_oo_castling;
+    this->black_ooo_castling = other.black_ooo_castling;
+
+    this->enPassant = other.enPassant;
+
+    this->halfmoveClock = other.halfmoveClock;
+    this->fullmoveNumber = other.fullmoveNumber;
+}
+

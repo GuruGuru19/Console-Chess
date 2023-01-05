@@ -23,11 +23,9 @@ public:
     static const std::string DARK_BACK;
     static const std::string LIGHT_BACK;
 
-    Screen();
-
-    std::string buildBoardString(FEN & fen);
-    std::string pieceCode(char c, bool dark);
-    std::string printMoveDialog(FEN & fen, bool check);
+    static std::string buildBoardString(FEN & fen);
+    static std::string pieceCode(char c, bool dark);
+    static std::string printMoveDialog(FEN & fen, bool check);
 };
 
 

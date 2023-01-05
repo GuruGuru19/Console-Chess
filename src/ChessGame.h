@@ -6,8 +6,25 @@
 #define ITAI_CHESS_CHESSGAME_H
 
 
-class ChessGame {
+#include "Screen.h"
+#include "Board.h"
 
+class ChessGame {
+private:
+    Board * board;
+    Screen * screen;
+
+    std::string whiteName;
+    std::string blackName;
+
+    void gameStart();
+    bool gameLoop();
+    void gameEnd();
+public:
+    ChessGame();
+    ~ChessGame();
+
+    void runGame();
 };
 
 

@@ -11,7 +11,10 @@
 class King : public Piece{
 public:
     King(std::string start, bool white);
+
     bool canMoveGeo(std::string next_position) override;
+    // doesn't need canMoveGeoToEat()
+    // doesn't need getPath()
 };
 
 

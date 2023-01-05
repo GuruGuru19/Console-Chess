@@ -12,7 +12,10 @@
 class Queen : public Piece{
 public:
     Queen(std::string start, bool white);
+
     bool canMoveGeo(std::string next_position) override;
+    // doesn't need canMoveGeoToEat()
+    std::string getPath(std::string next_position) override;
 };
 
 
