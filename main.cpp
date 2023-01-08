@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-#include "src/Board.h"
-#include "src/FEN.h"
-#include "src/Screen.h"
+#include "include/Board.h"
+#include "include/FEN.h"
+#include "include/Screen.h"
 
 int main() {
-    std::string fen_string =  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::string fen_string =  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kkq - 0 1";
     FEN * fen = new FEN(fen_string);
     std::string string = fen->getPositions();
     Screen * screen = new Screen();

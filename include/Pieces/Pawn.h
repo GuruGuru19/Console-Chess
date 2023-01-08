@@ -15,6 +15,7 @@ public:
     bool canMoveGeo(std::string next_position) override;
     bool canMoveGeoToEat(std::string & next_position) override;
     // doesn't need getPath()
+    std::string getGeoPossibleMoves() override;
 };
 
 

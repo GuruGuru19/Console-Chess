@@ -21,11 +21,13 @@ public:
     bool legalEatMove(std::string move, bool considerPinned = true){
         return legalMove(move, considerPinned, true);
     };
-    char getPiece(std::string & position);
+    Piece * getPiece(std::string & position){
+        return this->board[positionToSqr(position)];
+    };
     std::string getKingPosition(bool white);
     bool piecePinned(std::string position);
     bool movePathClear(std::string move);
-    std::string SqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned);
+    std::string sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned);
 
     static int positionToSqr(std::string position);
     static std::string sqrToPosition(int sqr);
@@ -33,6 +35,8 @@ public:
     void printBoard();
 
     bool move(std::string move);
+
+    std::string getLegalMoves(std::string position);
 
     char getActiveColor(){
         return this->boardFEN->getActiveColor();

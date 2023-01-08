@@ -20,8 +20,10 @@ private:
     void gameStart();
     bool gameLoop();
     void gameEnd();
+
+    bool kingMate(bool white_turn);
 public:
-    ChessGame();
+    ChessGame(std::string & fenstr);
     ~ChessGame();
 
     void runGame();

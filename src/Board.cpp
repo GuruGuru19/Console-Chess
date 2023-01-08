@@ -3,15 +3,14 @@
 //
 
 #include <iostream>
-#include "Board.h"
-#include "Pieces/Pawn.h"
-#include "Pieces/Rook.h"
-#include "Pieces/Knight.h"
-#include "Pieces/Bishop.h"
-#include "Pieces/Queen.h"
-#include "Pieces/King.h"
+#include "../include/Board.h"
+#include "../include/Pieces/Pawn.h"
+#include "../include/Pieces/Rook.h"
+#include "../include/Pieces/Knight.h"
+#include "../include/Pieces/Bishop.h"
+#include "../include/Pieces/Queen.h"
+#include "../include/Pieces/King.h"
 
-//TODO: implement the pawn special movement
 
 Board::Board(FEN &fen) {
     this->boardFEN = new FEN(fen);
@@ -64,18 +63,43 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
         return false;// trying to move an empty sqr
     }
 
+    //trying to move a king
+    if (piece->getMark() == 'K' || piece->getMark() == 'k'){
+        // trying to move a king to Threatened sqr
+        if (!sqrThreatener(move.substr(2), piece->getMark() == 'k', true).empty()){
+            return false;
+        }
+        // a king cant be pinned
+        considerPinned = false;
+    }
+    // tests if your trying to move while the king is checked
+    else{
+        std::string kingPos = getKingPosition(piece->getMark() >= 'A' && piece->getMark() >= 'Z');
+        std::string kingThreatenerPos = this->sqrThreatener(kingPos, !(piece->getMark() >= 'A' && piece->getMark() >= 'Z'), true);
+        //if the king is checked and this move doesn't fix it +
+        // assumes that there is only one threatener cause else this code isn't reachable
+        if (!kingThreatenerPos.empty()){
+            // if the move is to eat the Threatener
+            bool flag = move.substr(2) == kingThreatenerPos;
+            Piece * kingThreatener = this->board[positionToSqr(kingThreatenerPos)];
+            std::string path = kingThreatener->getPath(kingPos);
+            // if the move is to block the Threatener
+            for (int i = 0; i < path.size()/2 && !flag; ++i) {
+                if (move.substr(2) == path.substr(i*2, 2)){
+                    flag = true;
+                }
+            }
+            if (!flag){
+                return false;
+            }
+        }
+
+    }
+
     bool pinned = considerPinned && piecePinned(fromPos);
     bool geometrically_legal = toEat ? piece->canMoveGeoToEat(toPos) : piece->canMoveGeo(toPos);
     bool move_path_clear = movePathClear(move);
     return !pinned && geometrically_legal && move_path_clear;
-}
-
-char Board::getPiece(std::string & position) {
-    Piece * piece = this->board[positionToSqr(position)];
-    if (piece == nullptr){
-        return ' ';
-    }
-    return piece->getMark();
 }
 
 std::string Board::getKingPosition(bool white) {
@@ -111,17 +135,18 @@ bool Board::movePathClear(std::string move) {
     return true; // no problem
 }
 
-std::string Board::SqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned) {
+std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned) {
+    std::string threateners;
     char targetMarkSet = threatenedByWhite?'A':'a';
     for (int i = 0; i < 64; ++i) {
         Piece * p = this->board[i];
         if (p != nullptr && // the sqr in not empty
         p->getMark() >=targetMarkSet && p->getMark() < targetMarkSet + 26 && // & the threatener is the opposite color
                 legalEatMove(sqrToPosition(i)+position), !ignorePinned){ // & the move is legal
-            return sqrToPosition(i);
+            threateners.append(sqrToPosition(i));
         }
     }
-    return "";
+    return threateners;
 }
 
 int Board::positionToSqr(std::string position) {
@@ -155,4 +180,20 @@ void Board::printBoard() {
 
 bool Board::move(std::string move) {
     return false; //TODO
+}
+
+std::string Board::getLegalMoves(std::string position) {
+    Piece * piece = this->board[positionToSqr(position)];
+    if (piece == nullptr){
+        return "";
+    }
+    std::string geoMoves = piece->getGeoPossibleMoves();
+    std::string moves;
+    for (int i = 0; i < geoMoves.size()/2; ++i) {
+        std::string toPos = geoMoves.substr(i * 2, 2);
+        if (legalMove(position+toPos, true, false) || legalMove(position+toPos, true, true)){
+            moves.append(toPos);
+        }
+    }
+    return moves;
 }

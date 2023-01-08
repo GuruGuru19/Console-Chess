@@ -2,11 +2,14 @@
 // Created by itai on 1/3/23.
 //
 
-#include "ChessGame.h"
+#include <iostream>
+#include "../include/ChessGame.h"
 
-ChessGame::ChessGame() {
-    FEN * fen = new FEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+ChessGame::ChessGame(std::string & fenstr) {
+    FEN * fen = new FEN(fenstr);
     this->board = new Board(*fen);
+    this->whiteName = "";
+    this->blackName = "";
 }
 
 ChessGame::~ChessGame() {
@@ -20,40 +23,60 @@ void ChessGame::runGame() {
 }
 
 void ChessGame::gameStart() {
-    //TODO: players names
+    std::cout << "Enter player's one (White) name: ";
+    std::cin >> this->whiteName;
+    std::cout << "Enter player's one (Black) name: ";
+    std::cin >> this->blackName;
 
 }
 
-bool ChessGame::gameLoop() { //returns false when the game ends
+bool ChessGame::gameLoop() {
     bool white_turn = board->getActiveColor() == 'w';
     std::string kingPos = this->board->getKingPosition(white_turn);
 
     // position of a piece that is threatening the king
-    std::string kingThreatener = this->board->SqrThreatener(kingPos, !white_turn, true);
-    if (!kingThreatener.empty()){ // the (active_color)'s king is checked
-        bool safeSqrFlag = false;
-        //searches 3x3 around the king for empty untethered sqr
-        for (int y = kingPos[1] - 1; y <= kingPos[1] + 1 && !safeSqrFlag; ++y) {
-            for (int x = kingPos[0] - 1; x <= kingPos[0] + 1; ++x) {
-                std::string target = "  ";target[0] = (char)x;target[1] = (char)y;
-                //first check: can the king move to the target
-                //second check: is the target threatened
-                //the first check doesn't consider that a king cant move to a threatened sqr
-                //and the second check doesn't consider that a threatener can be pinned
-                if (this->board->legalMove(kingPos+target, false, true) && // its ok toEat:true because It's the king, so it's the same check true of false
-                    !this->board->SqrThreatener(target, !white_turn, true).empty()){
-                    safeSqrFlag = true;
-                    break;
-                }
-            }
+    std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn, true);
+    if (!kingThreateners.empty()){
+        if (kingMate(white_turn)){
+            return false;
         }
-        bool canEatThreatener = !this->board->SqrThreatener(kingThreatener, white_turn, false).empty();
-
-        //TODO: last mate check: can you block an attack?
     }
 
+    return true;
 }
 
 void ChessGame::gameEnd() {
     //TODO:print winner
+}
+
+bool ChessGame::kingMate(bool white_turn) {
+    std::string kingPos = this->board->getKingPosition(white_turn);
+
+    // position of a piece that is threatening the king
+    std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn, true);
+    if (!kingThreateners.empty()){ // the (active_color)'s king is checked
+        //if the king can run away
+        if (!this->board->getLegalMoves(kingPos).empty()){
+            return false;
+        } else if (kingThreateners.size() > 2){
+            return true; // if there are more than 1 Threatener the king can only run away
+        }
+
+        bool canEatThreatener = !this->board->sqrThreatener(kingThreateners, white_turn, false).empty();
+        if (canEatThreatener){
+            return false;
+        }
+
+        Piece * kingThreatenerPiece = this->board->getPiece(kingThreateners);
+        std::string path = kingThreatenerPiece->getPath(kingPos);
+        // if the move is to block the Threatener
+        for (int i = 0; i < path.size()/2; ++i) {
+            std::string pos = path.substr(i*2, 2);
+            if (!this->board->sqrThreatener(pos, white_turn, false).empty()){
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }

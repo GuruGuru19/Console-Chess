@@ -2,7 +2,7 @@
 // Created by itai on 1/3/23.
 //
 
-#include "FEN.h"
+#include "../include/FEN.h"
 
 FEN::FEN(std::string str) { // assumes the str is valid
     this->positions = "";
@@ -38,15 +38,26 @@ FEN::FEN(std::string str) { // assumes the str is valid
     str = str.substr(i);
     i = 0;
 
-    c = str[i++];
-    this->white_oo_castling = c == 'K';
-    c = str[i++];
-    this->white_ooo_castling = c == 'Q';
-    c = str[i++];
-    this->black_oo_castling = c == 'k';
-    c = str[i++];
-    this->black_ooo_castling = c == 'q';
-    i++;//for the space
+    std::string castling = str.substr(0,str.find(' '));
+    if (castling[0] != '-'){
+        while (!castling.empty()){
+            c = castling[0];
+            castling.erase(0,1);
+            if (c == 'K'){
+                this->white_oo_castling = true;
+            }
+            else if (c == 'Q'){
+                this->white_ooo_castling = true;
+            }
+            else if (c == 'k'){
+                this->black_oo_castling = true;
+            }
+            else if (c == 'q'){
+                this->black_ooo_castling = true;
+            }
+        }
+    }
+    i += str.find(' ') + 1;//for the space
     str = str.substr(i);
     i = 0;
 

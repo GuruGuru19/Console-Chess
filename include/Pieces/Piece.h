@@ -24,6 +24,8 @@ public:
         return "";//the pawn, knight and king make jumps so their moves don't have paths
     };
 
+    virtual std::string getGeoPossibleMoves() = 0;
+
     bool move(std::string next_position);
 
 

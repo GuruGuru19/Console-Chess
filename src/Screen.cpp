@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include "Screen.h"
+#include "../include/Screen.h"
 
 const std::string Screen::COLOR_CLEAR = "0";
 const std::string Screen::WHITE_TEXT = "97";

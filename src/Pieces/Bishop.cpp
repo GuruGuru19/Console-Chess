@@ -2,7 +2,7 @@
 // Created by itai on 1/3/23.
 //
 
-#include "Bishop.h"
+#include "../../include/Pieces/Bishop.h"
 
 Bishop::Bishop(std::string start, bool white) {
     this->mark = white?'B':'b';
@@ -18,10 +18,10 @@ bool Bishop::canMoveGeo(std::string next_position) {
 }
 
 std::string Bishop::getPath(std::string next_position) {
-    std::string moves;
     if (!canMoveGeo(next_position)){
-        return moves;
+        return "";
     }
+    std::string moves;
 
     int x_move = this->position[0] - next_position[0];
     int y_move = this->position[1] - next_position[1];
@@ -37,4 +37,30 @@ std::string Bishop::getPath(std::string next_position) {
     }
 
     return moves;
+}
+
+std::string Bishop::getGeoPossibleMoves() {
+    std::string diagonal_1_start = this->position;
+    std::string diagonal_2_start = this->position;
+    while (diagonal_1_start[0] > 'a' && diagonal_1_start[1] > '1'){
+        diagonal_1_start[0]-=1;
+        diagonal_1_start[1]+=1;
+    }
+    while (diagonal_2_start[0] > 'a' && diagonal_2_start[1] > '1'){
+        diagonal_2_start[0]-=1;
+        diagonal_2_start[1]-=1;
+    }
+
+    std::string positions;
+    while (diagonal_1_start[0] <= 'h' && diagonal_1_start[1] <= '8'){
+        positions.append(diagonal_1_start);
+        diagonal_1_start[0]+=1;
+        diagonal_1_start[1]-=1;
+    }
+    while (diagonal_2_start[0] <= 'h' && diagonal_2_start[1] <= '8'){
+        positions.append(diagonal_2_start);
+        diagonal_2_start[0]+=1;
+        diagonal_2_start[1]+=1;
+    }
+    return positions;
 }
