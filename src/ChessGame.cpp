@@ -72,7 +72,9 @@ bool ChessGame::kingMate(bool white_turn) {
         // if the move is to block the Threatener
         for (int i = 0; i < path.size()/2; ++i) {
             std::string pos = path.substr(i*2, 2);
-            if (!this->board->sqrThreatener(pos, white_turn, false).empty()){
+            std::string path_blocker_pos = this->board->sqrThreatener(pos, white_turn, false).substr(0,2);
+            if (!path_blocker_pos.empty() &&
+            (this->board->getPiece(path_blocker_pos)->getMark()!='K' && this->board->getPiece(path_blocker_pos)->getMark()!='k')){
                 return false;
             }
         }

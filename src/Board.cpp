@@ -57,6 +57,10 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
         return false;// the move is outside the board
     }
 
+    if (fromPos == toPos){
+        return false; // trying to move to the same place
+    }
+
     Piece * piece = this->board[positionToSqr(fromPos)];
 
     if (piece == nullptr){
@@ -66,7 +70,7 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
     //trying to move a king
     if (piece->getMark() == 'K' || piece->getMark() == 'k'){
         // trying to move a king to Threatened sqr
-        if (!sqrThreatener(move.substr(2), piece->getMark() == 'k', true).empty()){
+        if (!sqrThreatener(toPos, !piece->isWhite(), true).empty()){
             return false;
         }
         // a king cant be pinned
@@ -80,7 +84,7 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
         // assumes that there is only one threatener cause else this code isn't reachable
         if (!kingThreatenerPos.empty()){
             // if the move is to eat the Threatener
-            bool flag = move.substr(2) == kingThreatenerPos;
+            bool flag = toPos == kingThreatenerPos;
             Piece * kingThreatener = this->board[positionToSqr(kingThreatenerPos)];
             std::string path = kingThreatener->getPath(kingPos);
             // if the move is to block the Threatener
@@ -95,6 +99,16 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
         }
 
     }
+    Piece * pieceAtTarget = this->board[positionToSqr(toPos)];
+    if (toEat && pieceAtTarget == nullptr){
+        return false; //trying to eat an empty sqr
+    }
+    if (toEat && pieceAtTarget != nullptr && (pieceAtTarget->isWhite() == piece->isWhite())){
+        return false; //trying to eat the same color
+    }
+    if (!toEat && pieceAtTarget != nullptr){
+        return false; //trying to move to an occupied sqr
+    }
 
     bool pinned = considerPinned && piecePinned(fromPos);
     bool geometrically_legal = toEat ? piece->canMoveGeoToEat(toPos) : piece->canMoveGeo(toPos);
@@ -103,7 +117,7 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
 }
 
 std::string Board::getKingPosition(bool white) {
-    char target = white?'W':'w';
+    char target = white?'K':'k';
     for (int i = 0; i < 64; ++i) {
         if (this->board[i] != nullptr && this->board[i]->getMark() == target){
             return sqrToPosition(i);
@@ -139,10 +153,8 @@ std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, b
     std::string threateners;
     char targetMarkSet = threatenedByWhite?'A':'a';
     for (int i = 0; i < 64; ++i) {
-        Piece * p = this->board[i];
-        if (p != nullptr && // the sqr in not empty
-        p->getMark() >=targetMarkSet && p->getMark() < targetMarkSet + 26 && // & the threatener is the opposite color
-                legalEatMove(sqrToPosition(i)+position), !ignorePinned){ // & the move is legal
+        Piece * p = this->board[i];//TODO: WHATTT????
+        if (p != nullptr && p->getMark() >=targetMarkSet && p->getMark() < targetMarkSet + 26 && legalEatMove(sqrToPosition(i)+position, !ignorePinned)){ // & the move is legal
             threateners.append(sqrToPosition(i));
         }
     }
@@ -150,14 +162,14 @@ std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, b
 }
 
 int Board::positionToSqr(std::string position) {
-    int x = 'a' - position[0];
-    int y = '1' - position[1];
+    int x = position[0] - 'a';
+    int y = '8' - position[1];
     return x + y * 8;
 }
 
 std::string Board::sqrToPosition(int sqr) {
     char x = (char)('a' + (sqr%8));
-    char y = (char)('a' + (sqr/8));
+    char y = (char)('8' - (sqr/8));
     std::string p = "  ";
     p[0] = x;
     p[1] = y;

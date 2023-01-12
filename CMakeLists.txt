@@ -29,5 +29,35 @@ set(include_files
         include/ChessGame.h
         include/FEN.h
         )
+set(test_files
+        tests/TestFEN.cpp
+        tests/TestScreen.cpp tests/TestBoard.cpp tests/Prefixes/BoardPrefix.cpp tests/Prefixes/BoardPrefix.h)
 
 add_executable(itai_chess main.cpp ${src_files} ${include_files})
+
+
+# testing
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+#testing
+add_executable(itai_chess_tests
+        ${test_files}
+        ${src_files}
+        ${include_files}
+        )
+#testing
+target_link_libraries(
+        itai_chess_tests
+        GTest::gtest_main
+)
+include(GoogleTest)
+gtest_discover_tests(itai_chess_tests)
+#testing

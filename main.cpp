@@ -12,4 +12,5 @@ int main() {
     Board * board = new Board(*fen);
     board->printBoard();
     std::cout << screen->printMoveDialog(*fen, false) << std::endl;
+
 }
