@@ -33,7 +33,7 @@ FEN::FEN(std::string str) { // assumes the str is valid
     i = 0;
 
     c = str[i++];
-    this->activeColor = c;// 'w' or 'b'
+    this->whiteTurn = c == 'w';// 'w' or 'b'
     i++;//for the space
     str = str.substr(i);
     i = 0;
@@ -84,7 +84,7 @@ FEN::FEN(std::string str) { // assumes the str is valid
 FEN::FEN(FEN &other) {
     this->positions = other.positions;
 
-    this->activeColor = other.activeColor;
+    this->whiteTurn = other.whiteTurn;
 
     this->white_oo_castling = other.white_oo_castling;
     this->white_ooo_castling = other.white_ooo_castling;

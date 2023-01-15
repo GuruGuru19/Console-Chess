@@ -68,7 +68,7 @@ std::string Screen::pieceCode(char c, bool dark) {
 }
 
 std::string Screen::printMoveDialog(FEN & fen, bool check) {
-    std::string turn = fen.getActiveColor() == 'w'?"White":"Black";
+    std::string turn = fen.isWhiteTurn()?"White":"Black";
     std::string msg = "=================================\n";
     msg.append(buildBoardString(fen)+ "\n");
     if (check){
@@ -76,7 +76,7 @@ std::string Screen::printMoveDialog(FEN & fen, bool check) {
     }
     msg.append("its " + turn + "'s turn\n");
 
-    msg += fen.getActiveColor();
+    msg += fen.isWhiteTurn()?'w':'b';
     msg.append(" move: ");
     std::cout << msg;
     std::string move;

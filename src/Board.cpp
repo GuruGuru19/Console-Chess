@@ -48,7 +48,7 @@ Board::~Board() {
     }
 }
 
-bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
+bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool threateningCheck) {
     std::string fromPos = move.substr(0,2);
     std::string toPos = move.substr(2);
 
@@ -67,8 +67,12 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
         return false;// trying to move an empty sqr
     }
 
+//    if (piece->isWhite() != this->boardFEN->isWhiteTurn()){
+//        return false; //
+//    }
+
     //trying to move a king
-    if (piece->getMark() == 'K' || piece->getMark() == 'k'){
+    if (piece->getMark() == 'K' || piece->getMark() == 'k' && considerPinned){
         // trying to move a king to Threatened sqr
         if (!sqrThreatener(toPos, !piece->isWhite(), true).empty()){
             return false;
@@ -77,9 +81,9 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
         considerPinned = false;
     }
     // tests if your trying to move while the king is checked
-    else{
-        std::string kingPos = getKingPosition(piece->getMark() >= 'A' && piece->getMark() >= 'Z');
-        std::string kingThreatenerPos = this->sqrThreatener(kingPos, !(piece->getMark() >= 'A' && piece->getMark() >= 'Z'), true);
+    else if (considerPinned){
+        std::string kingPos = getKingPosition(piece->isWhite());
+        std::string kingThreatenerPos = this->sqrThreatener(kingPos, !piece->isWhite(), true);
         //if the king is checked and this move doesn't fix it +
         // assumes that there is only one threatener cause else this code isn't reachable
         if (!kingThreatenerPos.empty()){
@@ -100,10 +104,10 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat) {
 
     }
     Piece * pieceAtTarget = this->board[positionToSqr(toPos)];
-    if (toEat && pieceAtTarget == nullptr){
+    if (!threateningCheck && toEat && pieceAtTarget == nullptr){
         return false; //trying to eat an empty sqr
     }
-    if (toEat && pieceAtTarget != nullptr && (pieceAtTarget->isWhite() == piece->isWhite())){
+    if (!threateningCheck && toEat && (pieceAtTarget->isWhite() == piece->isWhite())){
         return false; //trying to eat the same color
     }
     if (!toEat && pieceAtTarget != nullptr){
@@ -137,7 +141,7 @@ bool Board::movePathClear(std::string move) {
     if (piece == nullptr){
         return false;// trying to move an empty sqr
     }
-    if (piece->canMoveGeo(toPos)){ // doesn't check the eatGeo cause its only relevant to the pawn
+    if (!piece->canMoveGeo(toPos)){ // doesn't check the eatGeo cause its only relevant to the pawn
         return false;// the piece cant move that way geometrically
     }
     std::string path = piece->getPath(toPos);
@@ -149,12 +153,12 @@ bool Board::movePathClear(std::string move) {
     return true; // no problem
 }
 
-std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned) {
+std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned) { // always ignores pins
     std::string threateners;
-    char targetMarkSet = threatenedByWhite?'A':'a';
     for (int i = 0; i < 64; ++i) {
-        Piece * p = this->board[i];//TODO: WHATTT????
-        if (p != nullptr && p->getMark() >=targetMarkSet && p->getMark() < targetMarkSet + 26 && legalEatMove(sqrToPosition(i)+position, !ignorePinned)){ // & the move is legal
+        Piece * p = this->board[i];
+        if (p != nullptr && (p->isWhite() == threatenedByWhite) &&
+        legalEatMove(sqrToPosition(i)+position,false, true)){ // & the move is legal
             threateners.append(sqrToPosition(i));
         }
     }
@@ -176,17 +180,18 @@ std::string Board::sqrToPosition(int sqr) {
     return p;
 }
 
-void Board::printBoard() {
+std::string Board::printBoard() {
+    std::string print;
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
             Piece * piece = this->board[x + y * 8];
             if (piece == nullptr){
-                std::cout << " ";
+                print += " ";
                 continue;
             }
-            std::cout << this->board[x + y * 8]->getMark();
+            print += this->board[x + y * 8]->getMark();
         }
-        std::cout << "\n";
+        print += "\n";
     }
 }
 

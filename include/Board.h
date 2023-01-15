@@ -14,12 +14,13 @@ class Board {
 private:
     FEN * boardFEN;
     Piece ** board;
+
 public:
     Board(FEN & fen);
     ~Board();
-    bool legalMove(std::string move, bool considerPinned = true, bool toEat = false);
-    bool legalEatMove(std::string move, bool considerPinned = true){
-        return legalMove(move, considerPinned, true);
+    bool legalMove(std::string move, bool considerPinned = true, bool toEat = false, bool threateningCheck = false);
+    bool legalEatMove(std::string move, bool considerPinned = true,  bool threateningCheck = false){
+        return legalMove(move, considerPinned, true, threateningCheck);
     };
     Piece * getPiece(std::string & position){
         return this->board[positionToSqr(position)];
@@ -32,14 +33,14 @@ public:
     static int positionToSqr(std::string position);
     static std::string sqrToPosition(int sqr);
 
-    void printBoard();
+    std::string printBoard();
 
     bool move(std::string move);
 
     std::string getLegalMoves(std::string position);
 
-    char getActiveColor(){
-        return this->boardFEN->getActiveColor();
+    bool isWhiteTurn(){
+        return this->boardFEN->isWhiteTurn();
     }
 };
 

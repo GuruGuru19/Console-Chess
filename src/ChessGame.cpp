@@ -31,11 +31,11 @@ void ChessGame::gameStart() {
 }
 
 bool ChessGame::gameLoop() {
-    bool white_turn = board->getActiveColor() == 'w';
+    bool white_turn = board->isWhiteTurn();
     std::string kingPos = this->board->getKingPosition(white_turn);
 
     // position of a piece that is threatening the king
-    std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn, true);
+    std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
     if (!kingThreateners.empty()){
         if (kingMate(white_turn)){
             return false;

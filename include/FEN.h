@@ -12,7 +12,7 @@ class FEN {
 private:
     std::string positions;
 
-    char activeColor;
+    bool whiteTurn;
 
     bool white_oo_castling;
     bool white_ooo_castling;
@@ -30,8 +30,8 @@ public:
     std::string getPositions(){
         return this->positions;
     };
-    char getActiveColor() const{
-        return this->activeColor;
+    bool isWhiteTurn() const{
+        return this->whiteTurn;
     };
     bool getWooCastling() const{
         return this->white_oo_castling;

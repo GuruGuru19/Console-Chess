@@ -27,8 +27,8 @@ std::string Queen::getPath(std::string next_position) {
         return "";
     }
 
-    int x_move = this->position[0] - next_position[0];
-    int y_move = this->position[1] - next_position[1];
+    int x_move = next_position[0] - this->position[0];
+    int y_move = next_position[1] - this->position[1];
     int x_dir;
     int y_dir;
 
@@ -42,7 +42,7 @@ std::string Queen::getPath(std::string next_position) {
         y_dir = y_move == 0 ? 0 : y_move/abs(y_move);
     }
     std::string moves;
-    for (int n = 1; n < abs(x_move); ++n) {
+    for (int n = 1; n < std::max(abs(x_move), abs(y_move)); ++n) {
         char x = (char)(this->position[0] + n * x_dir);
         char y = (char)(this->position[1] + n * y_dir);
         std::string newPos; newPos+=x; newPos+=y;
