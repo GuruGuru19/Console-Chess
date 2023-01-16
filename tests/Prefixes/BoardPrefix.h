@@ -13,7 +13,9 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    Board * startBoard;
+    Board * board1;
+    Board * board2;
+    Board * board3;
 };
 
 

@@ -16,6 +16,8 @@ public:
     // doesn't need canMoveGeoToEat()
     // doesn't need getPath()
     std::string getGeoPossibleMoves() override;
+
+    int isCastling(std::string next_position);
 };
 
 

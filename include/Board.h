@@ -22,9 +22,7 @@ public:
     bool legalEatMove(std::string move, bool considerPinned = true,  bool threateningCheck = false){
         return legalMove(move, considerPinned, true, threateningCheck);
     };
-    Piece * getPiece(std::string & position){
-        return this->board[positionToSqr(position)];
-    };
+    Piece * getPiece(std::string & position);
     std::string getKingPosition(bool white);
     bool piecePinned(std::string position);
     bool movePathClear(std::string move);

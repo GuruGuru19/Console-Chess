@@ -77,6 +77,20 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
         if (!sqrThreatener(toPos, !piece->isWhite(), true).empty()){
             return false;
         }
+        King * king = dynamic_cast<King *>(piece);
+        int casling = king->isCastling(toPos);
+        if (casling == 1 && !this->boardFEN->getWooCastling()){
+            return false;
+        }
+        if (casling == 2 && !this->boardFEN->getWoooCastling()){
+            return false;
+        }
+        if (casling == 3 && !this->boardFEN->getBooCastling()){
+            return false;
+        }
+        if (casling == 4 && !this->boardFEN->getBoooCastling()){
+            return false;
+        }
         // a king cant be pinned
         considerPinned = false;
     }
@@ -104,10 +118,14 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
 
     }
     Piece * pieceAtTarget = this->board[positionToSqr(toPos)];
-    if (!threateningCheck && toEat && pieceAtTarget == nullptr){
-        return false; //trying to eat an empty sqr
+    if (!threateningCheck && toEat && pieceAtTarget == nullptr){// trying to eat an empty sqr
+        if ( not (toPos == this->boardFEN->getEnPassant() &&
+        (piece->getMark() == 'p' || piece->getMark() == 'P') &&
+        (this->boardFEN->isWhiteTurn() == piece->isWhite()))){// En passant
+            return false;
+        }
     }
-    if (!threateningCheck && toEat && (pieceAtTarget->isWhite() == piece->isWhite())){
+    if (!threateningCheck && toEat && pieceAtTarget != nullptr && (pieceAtTarget->isWhite() == piece->isWhite())){
         return false; //trying to eat the same color
     }
     if (!toEat && pieceAtTarget != nullptr){
@@ -120,6 +138,13 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
     return !pinned && geometrically_legal && move_path_clear;
 }
 
+Piece * Board::getPiece(std::string &position) {
+    if (position[0] >= 'a' && position[0] <='h' && position[1] >= '1' && position[1] <='8'){
+        return this->board[positionToSqr(position)];// the move is outside the board
+    }
+    return nullptr;
+}
+
 std::string Board::getKingPosition(bool white) {
     char target = white?'K':'k';
     for (int i = 0; i < 64; ++i) {
@@ -130,7 +155,34 @@ std::string Board::getKingPosition(bool white) {
     return "";
 }
 
-bool Board::piecePinned(std::string position) {//TODO
+bool Board::piecePinned(std::string position) {
+    if (not (position[0] >= 'a' && position[0] <='h' && position[1] >= '1' && position[1] <='8')){
+        return false; // the sqr is outside the board (only gets here in tests)
+    }
+    Piece * piece = this->board[positionToSqr(position)];
+    if (piece == nullptr){
+        return false;
+    }
+    std::string kingPos = getKingPosition(piece->isWhite());
+    for (int i = 0; i < 64; ++i) {
+        Piece * pinner = this->board[i];
+        if (pinner != nullptr && (pinner->isWhite() != piece->isWhite())){
+            std::string path = pinner->getPath(kingPos);
+            bool flag = false;
+            for (int j = 0; j < path.size()/2; ++j) {
+                if (this->board[positionToSqr(path.substr(j*2, 2))] != nullptr){
+                    if (path.substr(j*2, 2) == position){
+                        flag = true;
+                    } else{
+                        return false;
+                    }
+                }
+            }
+            if (flag){
+                return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -141,7 +193,7 @@ bool Board::movePathClear(std::string move) {
     if (piece == nullptr){
         return false;// trying to move an empty sqr
     }
-    if (!piece->canMoveGeo(toPos)){ // doesn't check the eatGeo cause its only relevant to the pawn
+    if (!piece->canMoveGeo(toPos) && !piece->canMoveGeoToEat(toPos)){ // doesn't check the eatGeo cause its only relevant to the pawn
         return false;// the piece cant move that way geometrically
     }
     std::string path = piece->getPath(toPos);

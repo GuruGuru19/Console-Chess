@@ -36,3 +36,15 @@ TEST(Test_FEN, correctBuildFEN3Test){
     EXPECT_FALSE(fen->getBoooCastling());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
 }
+
+TEST(Test_FEN, correctBuildFEN4Test){
+    std::string fen_string = "r3k2r/pppq1p1p/2np1bpB/4p3/2PNP2P/1PN3P1/P1P1BP2/1R2K2R b K - 0 14";
+    FEN * fen = new FEN(fen_string);
+    EXPECT_STREQ(fen->getPositions().c_str(), "r   k  rpppq p p  np bpB    p     PNP  P PN   P P P BP   R  K  R");
+    EXPECT_FALSE(fen->isWhiteTurn());
+    EXPECT_TRUE(fen->getWooCastling());
+    EXPECT_FALSE(fen->getWoooCastling());
+    EXPECT_FALSE(fen->getBooCastling());
+    EXPECT_FALSE(fen->getBoooCastling());
+    EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+}

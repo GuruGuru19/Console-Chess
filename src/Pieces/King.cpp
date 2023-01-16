@@ -11,6 +11,12 @@ King::King(std::string start, bool white) {
 }
 
 bool King::canMoveGeo(std::string next_position) {
+    if (isWhite() && this->position == "e1" && (next_position == "g1" || next_position == "c1")){
+        return true;
+    } else if (!isWhite() && this->position == "e8" && (next_position == "g8" || next_position == "c8")){
+        return true;
+    }
+
     int x_move_size = abs(this->position[0] - next_position[0]);
     int y_move_size = abs(this->position[1] - next_position[1]);
 
@@ -37,4 +43,20 @@ std::string King::getGeoPossibleMoves() {
     positions.append(empty + (char)(this->position[0]) + (char)(this->position[1] - 1)); // 0 -
 
     return positions;
+}
+
+int King::isCastling(std::string next_position) {
+    if (isWhite() && this->position == "e1" && next_position == "g1"){
+        return 1;//w o-o
+    }
+    else if (isWhite() && this->position == "e1" && next_position == "c1"){
+        return 2;//w o-o-o
+    }
+    else if (!isWhite() && this->position == "e8" && next_position == "g8"){
+        return 3;//b o-o
+    }
+    else if (!isWhite() && this->position == "e8" && next_position == "c8"){
+        return 4;//b o-o-o
+    }
+    return 0;
 }

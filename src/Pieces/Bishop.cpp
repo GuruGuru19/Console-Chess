@@ -23,8 +23,8 @@ std::string Bishop::getPath(std::string next_position) {
     }
     std::string moves;
 
-    int x_move = this->position[0] - next_position[0];
-    int y_move = this->position[1] - next_position[1];
+    int x_move = next_position[0] - this->position[0];
+    int y_move = next_position[1] - this->position[1];
 
     int x_dir = x_move/abs(x_move);
     int y_dir = y_move/abs(y_move);

@@ -38,6 +38,10 @@ FEN::FEN(std::string str) { // assumes the str is valid
     str = str.substr(i);
     i = 0;
 
+    white_oo_castling = false;
+    white_ooo_castling = false;
+    black_oo_castling = false;
+    black_ooo_castling = false;
     std::string castling = str.substr(0,str.find(' '));
     if (castling[0] != '-'){
         while (!castling.empty()){
