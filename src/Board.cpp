@@ -79,16 +79,16 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
         }
         King * king = dynamic_cast<King *>(piece);
         int casling = king->isCastling(toPos);
-        if (casling == 1 && !this->boardFEN->getWooCastling()){
+        if (casling == 1 && (!this->boardFEN->getWooCastling() || !movePathClear("h1e1"))){
             return false;
         }
-        if (casling == 2 && !this->boardFEN->getWoooCastling()){
+        if (casling == 2 && (!this->boardFEN->getWoooCastling() || !movePathClear("a1e1"))){
             return false;
         }
-        if (casling == 3 && !this->boardFEN->getBooCastling()){
+        if (casling == 3 && (!this->boardFEN->getBooCastling() || !movePathClear("h8e8"))){
             return false;
         }
-        if (casling == 4 && !this->boardFEN->getBoooCastling()){
+        if (casling == 4 && (!this->boardFEN->getBoooCastling() || !movePathClear("a8e8"))){
             return false;
         }
         // a king cant be pinned
@@ -245,10 +245,24 @@ std::string Board::printBoard() {
         }
         print += "\n";
     }
+    return print;
 }
 
-bool Board::move(std::string move) {
-    return false; //TODO
+bool Board::move(std::string move) { //TODO: update FEN & piece's internal position
+    if (!(legalMove(move) || legalEatMove(move))){ // remember ! they cant both be true
+        return false;
+    }
+    std::string fromPos = move.substr(0,2);
+    std::string toPos = move.substr(2,2);
+    Piece * piece = this->board[positionToSqr(fromPos)];
+    if (legalMove(move)){
+        this->board[positionToSqr(fromPos)] = nullptr;
+        this->board[positionToSqr(toPos)] = piece;
+    } else{ // eating
+        delete this->board[positionToSqr(fromPos)];
+        this->board[positionToSqr(toPos)] = piece;
+    }
+    return true;
 }
 
 std::string Board::getLegalMoves(std::string position) {

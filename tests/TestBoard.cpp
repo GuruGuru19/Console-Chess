@@ -57,6 +57,17 @@ TEST(BoardTest, legalMoveCastling2Test){
     delete board; delete fen;
 }
 
+TEST(BoardTest, legalMoveCastling3Test){
+    std::string fen_string = "r3k2r/2q3b1/2n1b2n/pppppppp/PPPPPPPP/4B2N/6B1/RQ1NK2R b KQkq - 13 15"; // checking that you cant castle if the path isn't clear
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+    EXPECT_TRUE(board->legalMove("e1g1"));//w o-o
+    EXPECT_FALSE(board->legalMove("e1c1"));//w o-o-o
+    EXPECT_TRUE(board->legalMove("e8g8"));//b o-o
+    EXPECT_TRUE(board->legalMove("e8c8"));//b o-o-o
+    delete board; delete fen;
+}
+
 TEST(BoardTest, legalMoveEnPassantTest){
     std::string fen_string = "rnbqkbnr/ppp5/Q3p1pp/3pPp2/8/2P5/PP1P1PPP/RNB1KBNR w KQkq d6 0 6";
     FEN * fen = new FEN(fen_string);
@@ -145,8 +156,18 @@ TEST_F(BoardPrefix, sqrThreatenerTest){
     EXPECT_STREQ("e5", e8_threatener.c_str());
 }
 
-TEST_F(BoardPrefix, moveTest){
-    //TODO: write test
+TEST_F(BoardPrefix, move1Test){
+    std::string fen_string = "r1b3nr/pppk2qp/1bnp4/4p1BQ/2BPP3/2P5/PP3PPP/RN3RK1 w - - 1 12";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+
+    EXPECT_STREQ(board->printBoard().c_str(), "r b   nr\npppk  qp\n bnp    \n    p BQ\n  BPP   \n  P     \nPP   PPP\nRN   RK \n");
+    ASSERT_TRUE(board->move("c4e6"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r b   nr\npppk  qp\n bnpB   \n    p BQ\n   PP   \n  P     \nPP   PPP\nRN   RK \n");
+    ASSERT_TRUE(board->move("d7e6"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r b   nr\nppp   qp\n bnpk   \n    p BQ\n   PP   \n  P     \nPP   PPP\nRN   RK \n");
+
+    delete board; delete fen;
 }
 
 TEST_F(BoardPrefix, moveToEatTest){
