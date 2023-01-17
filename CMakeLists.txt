@@ -33,7 +33,7 @@ set(test_files
         tests/TestFEN.cpp
         tests/TestScreen.cpp tests/TestBoard.cpp tests/Prefixes/BoardPrefix.cpp tests/Prefixes/BoardPrefix.h tests/TestPieces/TestQueen.cpp tests/TestPieces/TestRook.cpp tests/TestPieces/BishopTest.cpp tests/TestChessGame.cpp)
 
-add_executable(itai_chess main.cpp ${src_files} ${include_files})
+
 
 
 # testing
@@ -53,9 +53,16 @@ add_executable(itai_chess_tests
         ${src_files}
         ${include_files}
         )
+add_executable(itai_chess main.cpp
+        ${src_files}
+        ${include_files})
 #testing
 target_link_libraries(
         itai_chess_tests
+        GTest::gtest_main
+)
+target_link_libraries(
+        itai_chess
         GTest::gtest_main
 )
 include(GoogleTest)

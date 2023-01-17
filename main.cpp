@@ -3,9 +3,10 @@
 #include "include/Board.h"
 #include "include/FEN.h"
 #include "include/Screen.h"
+#include "include/ChessGame.h"
 
 int main() {
-    std::cout << "r b   nr\npppk  qp\n bnp    \n    p BQ\n  BPP   \n  P     \nPP   PPP\nRN   RK \n" << std::endl;
-    std::cout << "r b   nr\npppk  qp\n bnpB   \n    p BQ\n   PP   \n  P     \nPP   PPP\nRN   RK \n" << std::endl;
-
+    std::string starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    ChessGame * game = new ChessGame(starting_fen);
+    game->runGame();
 }

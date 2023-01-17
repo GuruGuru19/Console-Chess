@@ -284,3 +284,11 @@ TEST(BoardTest, getLegalMovesCastling2Test){
     EXPECT_STREQ(board->getLegalMoves("e8").c_str(), "g8c8d7d8f8f7e7");
     delete board; delete fen;
 }
+
+TEST(BoardTest, KupperGameBug){
+    std::string fen_string = "2kr1b1r/p3p3/2ppNnp1/7p/3PP3/1PB2P2/6PP/R3K1NR b KQ - 0 1";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+    EXPECT_TRUE(board->legalMove("d8d7"));
+    delete board; delete fen;
+}

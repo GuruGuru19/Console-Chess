@@ -32,27 +32,40 @@ void ChessGame::gameStart() {
 
 bool ChessGame::gameLoop() {
     bool white_turn = this->board->isWhiteTurn();
+    FEN * fen = this->board->getFEN();
     std::string kingPos = this->board->getKingPosition(white_turn);
 
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
     bool king_checked = !kingThreateners.empty();
     if ((king_checked && kingMate()) || staleMate()){
+        std::cout << Screen::buildBoardString(*fen) << std::endl;
         return false;
     }
 
-    //TODO: play
+    std::string move;
+    while (true){
+        move = Screen::printMoveDialog(*fen, king_checked);
+        if (this->board->legalMove(move) || this->board->legalEatMove(move)){
+            break;
+        }
+        std::cout << "=================================" << std::endl;
+        std::cout << "Illegal move! try again" << std::endl;
+    }
+    this->board->move(move);
 
     return true;
 }
 
-void ChessGame::gameEnd() {
+void ChessGame::gameEnd() { //TODO
     bool white_turn = board->isWhiteTurn();
     if (kingMate()){
-
+        std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"mCheck mate!\33[0m\n";
+        std::cout << msg << (white_turn? "Black (": "White (") << (white_turn? this->blackName: this->whiteName) << ") wins!";
     }
     else if (staleMate()){
-
+        std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"Stale mate!\33[0m\n";
+        std::cout << msg << "Draw";
     }
     else{
 
