@@ -138,11 +138,11 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
     return !pinned && geometrically_legal && move_path_clear;
 }
 
-Piece * Board::getPiece(std::string &position) {
+Piece * Board::getPiece(std::string & position) {
     if (position[0] >= 'a' && position[0] <='h' && position[1] >= '1' && position[1] <='8'){
         return this->board[positionToSqr(position)];// the move is outside the board
     }
-    return nullptr;
+    return nullptr; // the move is outside the board
 }
 
 std::string Board::getKingPosition(bool white) {
@@ -205,12 +205,12 @@ bool Board::movePathClear(std::string move) {
     return true; // no problem
 }
 
-std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned) { // always ignores pins
+std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned, bool moveToEat) { // always ignores pins
     std::string threateners;
     for (int i = 0; i < 64; ++i) {
         Piece * p = this->board[i];
         if (p != nullptr && (p->isWhite() == threatenedByWhite) &&
-        legalEatMove(sqrToPosition(i)+position,false, true)){ // & the move is legal
+        legalMove(sqrToPosition(i)+position,!ignorePinned, moveToEat, true)){ // & the move is legal
             threateners.append(sqrToPosition(i));
         }
     }

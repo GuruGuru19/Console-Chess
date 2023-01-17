@@ -31,25 +31,36 @@ void ChessGame::gameStart() {
 }
 
 bool ChessGame::gameLoop() {
-    bool white_turn = board->isWhiteTurn();
+    bool white_turn = this->board->isWhiteTurn();
     std::string kingPos = this->board->getKingPosition(white_turn);
 
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
-    if (!kingThreateners.empty()){
-        if (kingMate(white_turn)){
-            return false;
-        }
+    bool king_checked = !kingThreateners.empty();
+    if ((king_checked && kingMate()) || staleMate()){
+        return false;
     }
+
+    //TODO: play
 
     return true;
 }
 
 void ChessGame::gameEnd() {
-    //TODO:print winner
+    bool white_turn = board->isWhiteTurn();
+    if (kingMate()){
+
+    }
+    else if (staleMate()){
+
+    }
+    else{
+
+    }
 }
 
-bool ChessGame::kingMate(bool white_turn) {
+bool ChessGame::kingMate() {
+    bool white_turn = this->board->isWhiteTurn();
     std::string kingPos = this->board->getKingPosition(white_turn);
 
     // position of a piece that is threatening the king
@@ -62,7 +73,8 @@ bool ChessGame::kingMate(bool white_turn) {
             return true; // if there are more than 1 Threatener the king can only run away
         }
 
-        bool canEatThreatener = !this->board->sqrThreatener(kingThreateners, white_turn, false).empty();
+        bool canEatThreatener = this->board->sqrThreatener(kingThreateners, !white_turn, true).empty() &&
+                board->legalEatMove(kingPos+kingThreateners);
         if (canEatThreatener){
             return false;
         }
@@ -72,7 +84,7 @@ bool ChessGame::kingMate(bool white_turn) {
         // if the move is to block the Threatener
         for (int i = 0; i < path.size()/2; ++i) {
             std::string pos = path.substr(i*2, 2);
-            std::string path_blocker_pos = this->board->sqrThreatener(pos, white_turn, false).substr(0,2);
+            std::string path_blocker_pos = this->board->sqrThreatener(pos, white_turn, false, false).substr(0,2);
             if (!path_blocker_pos.empty() &&
             (this->board->getPiece(path_blocker_pos)->getMark()!='K' && this->board->getPiece(path_blocker_pos)->getMark()!='k')){
                 return false;
@@ -81,4 +93,19 @@ bool ChessGame::kingMate(bool white_turn) {
         return true;
     }
     return false;
+}
+
+bool ChessGame::staleMate() {
+    if (kingMate()){
+        return false;
+    }
+    bool white_turn = this->board->isWhiteTurn();
+    for (int i = 0; i < 64; ++i) {
+        std::string pos = Board::sqrToPosition(i);
+        Piece * piece = this->board->getPiece(pos);
+        if (piece != nullptr && (piece->isWhite() == white_turn) && !this->board->getLegalMoves(pos).empty()){
+            return false; // for every (same color) piece -> do you have possible moves?
+        }
+    }
+    return true; // if none of the color's pieces have moves
 }

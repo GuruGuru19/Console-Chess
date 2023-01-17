@@ -31,7 +31,7 @@ set(include_files
         )
 set(test_files
         tests/TestFEN.cpp
-        tests/TestScreen.cpp tests/TestBoard.cpp tests/Prefixes/BoardPrefix.cpp tests/Prefixes/BoardPrefix.h tests/TestPieces/TestQueen.cpp tests/TestPieces/TestRook.cpp tests/TestPieces/BishopTest.cpp)
+        tests/TestScreen.cpp tests/TestBoard.cpp tests/Prefixes/BoardPrefix.cpp tests/Prefixes/BoardPrefix.h tests/TestPieces/TestQueen.cpp tests/TestPieces/TestRook.cpp tests/TestPieces/BishopTest.cpp tests/TestChessGame.cpp)
 
 add_executable(itai_chess main.cpp ${src_files} ${include_files})
 

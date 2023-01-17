@@ -26,7 +26,7 @@ public:
     std::string getKingPosition(bool white);
     bool piecePinned(std::string position);
     bool movePathClear(std::string move);
-    std::string sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned = false);
+    std::string sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned = false, bool moveToEat = true);
 
     static int positionToSqr(std::string position);
     static std::string sqrToPosition(int sqr);

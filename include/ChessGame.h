@@ -8,6 +8,7 @@
 
 #include "Screen.h"
 #include "Board.h"
+#include <gtest/gtest.h>
 
 class ChessGame {
 private:
@@ -21,7 +22,13 @@ private:
     bool gameLoop();
     void gameEnd();
 
-    bool kingMate(bool white_turn);
+    bool kingMate();
+    bool staleMate();
+
+    FRIEND_TEST(ChessGameTest, kingMate1Test);
+    FRIEND_TEST(ChessGameTest, kingMate2Test);
+    FRIEND_TEST(ChessGameTest, kingMate3Test);
+    FRIEND_TEST(ChessGameTest, kingMate4Test);
 public:
     ChessGame(std::string & fenstr);
     ~ChessGame();
