@@ -101,3 +101,28 @@ FEN::FEN(FEN &other) {
     this->fullmoveNumber = other.fullmoveNumber;
 }
 
+void FEN::update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::string enPassant, bool eat) {
+    std::string new_positions;
+    for (int i = 0; i < 64; ++i) {
+        if (board[i] == nullptr){
+            new_positions += " ";
+        } else{
+            new_positions += board[i]->getMark();
+        }
+    }
+    this->positions = new_positions;
+
+    this->whiteTurn = !this->whiteTurn;
+
+    this->white_oo_castling = woo;
+    this->white_ooo_castling = wooo;
+    this->black_oo_castling = boo;
+    this->black_ooo_castling = booo;
+
+    this->enPassant = enPassant.size() != 2 ? "-" : enPassant;
+
+    this->halfmoveClock = eat ? 0 : this->halfmoveClock + 1;
+    this->fullmoveNumber += this->whiteTurn ? 1 : 0; // if its white now (after it was changed)
+
+}
+

@@ -156,22 +156,68 @@ TEST_F(BoardPrefix, sqrThreatenerTest){
     EXPECT_STREQ("e5", e8_threatener.c_str());
 }
 
-TEST_F(BoardPrefix, move1Test){
+TEST(BoardTest, move1Test){
     std::string fen_string = "r1b3nr/pppk2qp/1bnp4/4p1BQ/2BPP3/2P5/PP3PPP/RN3RK1 w - - 1 12";
     FEN * fen = new FEN(fen_string);
     Board * board = new Board(*fen);
 
     EXPECT_STREQ(board->printBoard().c_str(), "r b   nr\npppk  qp\n bnp    \n    p BQ\n  BPP   \n  P     \nPP   PPP\nRN   RK \n");
+
     ASSERT_TRUE(board->move("c4e6"));
     EXPECT_STREQ(board->printBoard().c_str(), "r b   nr\npppk  qp\n bnpB   \n    p BQ\n   PP   \n  P     \nPP   PPP\nRN   RK \n");
+
     ASSERT_TRUE(board->move("d7e6"));
     EXPECT_STREQ(board->printBoard().c_str(), "r b   nr\nppp   qp\n bnpk   \n    p BQ\n   PP   \n  P     \nPP   PPP\nRN   RK \n");
+
+    ASSERT_TRUE(board->move("h5e8"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r b Q nr\nppp   qp\n bnpk   \n    p B \n   PP   \n  P     \nPP   PPP\nRN   RK \n");
+
+    ASSERT_TRUE(board->move("g7e7"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r b Q nr\nppp q  p\n bnpk   \n    p B \n   PP   \n  P     \nPP   PPP\nRN   RK \n");
+
+    ASSERT_TRUE(board->move("d4d5"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r b Q nr\nppp q  p\n bnpk   \n   Pp B \n    P   \n  P     \nPP   PPP\nRN   RK \n");
 
     delete board; delete fen;
 }
 
-TEST_F(BoardPrefix, moveToEatTest){
-    //TODO: write test (remember En passant)
+
+TEST(BoardTest, moveCastlingTest){
+    std::string fen_string = "r3k2r/2q2nb1/2n1b3/pppppppp/PPPPPPPP/4B2N/6B1/RQ1NK2R w KQkq - 14 16";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+
+    EXPECT_STREQ(board->printBoard().c_str(), "r   k  r\n  q  nb \n  n b   \npppppppp\nPPPPPPPP\n    B  N\n      B \nRQ NK  R\n");
+
+    ASSERT_FALSE(board->move("e1c1"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r   k  r\n  q  nb \n  n b   \npppppppp\nPPPPPPPP\n    B  N\n      B \nRQ NK  R\n");
+
+    ASSERT_TRUE(board->move("e1g1"));
+    EXPECT_STREQ(board->printBoard().c_str(), "r   k  r\n  q  nb \n  n b   \npppppppp\nPPPPPPPP\n    B  N\n      B \nRQ N RK \n");
+
+    ASSERT_TRUE(board->move("e8c8"));
+    EXPECT_STREQ(board->printBoard().c_str(), "  kr   r\n  q  nb \n  n b   \npppppppp\nPPPPPPPP\n    B  N\n      B \nRQ N RK \n");
+
+    delete board; delete fen;
+}
+
+TEST(BoardTest, moveEnPassantTest){
+    std::string fen_string = "rnbqkbnr/pppp2pp/4p3/4Pp2/8/8/PPPPQPPP/RNB1KBNR b KQkq - 1 3";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+
+    EXPECT_STREQ(board->printBoard().c_str(), "rnbqkbnr\npppp  pp\n    p   \n    Pp  \n        \n        \nPPPPQPPP\nRNB KBNR\n");
+
+    ASSERT_FALSE(board->move("e5f6"));
+
+    ASSERT_TRUE(board->move("d7d5"));
+    EXPECT_STREQ(board->printBoard().c_str(), "rnbqkbnr\nppp   pp\n    p   \n   pPp  \n        \n        \nPPPPQPPP\nRNB KBNR\n");
+    ASSERT_STREQ(board->getFEN()->getEnPassant().c_str(), "d6");
+
+    ASSERT_TRUE(board->move("e5d6"));
+    EXPECT_STREQ(board->printBoard().c_str(), "rnbqkbnr\nppp   pp\n   Pp   \n     p  \n        \n        \nPPPPQPPP\nRNB KBNR\n");
+
+    delete board; delete fen;
 }
 
 TEST(BoardTest, SqrToPosTest){

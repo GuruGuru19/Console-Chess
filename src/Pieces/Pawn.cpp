@@ -34,6 +34,19 @@ bool Pawn::canMoveGeoToEat(std::string & next_position) {
     }
 }
 
+std::string Pawn::getPath(std::string next_position) {
+    bool two_step = (this->position[1] == '2' && next_position[0] == this->position[0] && next_position[1] == '4') ||
+            (this->position[1] == '7' && next_position[0] == this->position[0] && next_position[1] == '5'); // two steps
+    std::string middle;
+    if (two_step && isWhite()){
+        middle+=next_position[0]; middle += '3';
+    }
+    else if(two_step){
+        middle+=next_position[0]; middle += '6';
+    }
+    return middle;
+}
+
 std::string Pawn::getGeoPossibleMoves() {
     if (isWhite()){
         std::string positions = "11223344";

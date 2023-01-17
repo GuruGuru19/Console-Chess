@@ -21,7 +21,7 @@ public:
     };
 
     virtual std::string getPath(std::string next_position) {
-        return "";//the pawn, knight and king make jumps so their moves don't have paths
+        return "";//the knight and king make jumps so their moves don't have paths
     };
 
     virtual std::string getGeoPossibleMoves() = 0;
@@ -35,6 +35,10 @@ public:
 
     char getMark(){
         return this->mark;
+    };
+
+    void setPosition(std::string new_position){
+        this->position = new_position;
     };
 };
 

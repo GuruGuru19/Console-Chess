@@ -248,20 +248,87 @@ std::string Board::printBoard() {
     return print;
 }
 
-bool Board::move(std::string move) { //TODO: update FEN & piece's internal position
-    if (!(legalMove(move) || legalEatMove(move))){ // remember ! they cant both be true
+bool Board::move(std::string move) {
+    bool legal_move = legalMove(move);
+    bool legal_eat_move = legalEatMove(move);
+
+    if (!(legal_move || legal_eat_move)){ // remember ! they cant both be true
         return false;
     }
     std::string fromPos = move.substr(0,2);
     std::string toPos = move.substr(2,2);
     Piece * piece = this->board[positionToSqr(fromPos)];
-    if (legalMove(move)){
-        this->board[positionToSqr(fromPos)] = nullptr;
-        this->board[positionToSqr(toPos)] = piece;
-    } else{ // eating
-        delete this->board[positionToSqr(fromPos)];
-        this->board[positionToSqr(toPos)] = piece;
+
+    std::string enPassant; // reset
+    bool woo = this->boardFEN->getWooCastling();
+    bool wooo = this->boardFEN->getWoooCastling();
+    bool boo = this->boardFEN->getBooCastling();
+    bool booo = this->boardFEN->getBoooCastling();
+
+    if (piece->getMark() == 'p' || piece->getMark() == 'P'){ //if it's a pawn
+        enPassant = piece->getPath(toPos);// save the path as the en passant
     }
+    else if(piece->getMark() == 'K'){ // if the white king moves
+        woo = false;
+        wooo = false;
+    }
+    else if(piece->getMark() == 'k'){ // if the black King moves
+        boo = false;
+        booo = false;
+    }
+    else if (!woo && fromPos == "h1"){ // is the rook moves
+        woo = false;
+    }
+    else if (!wooo && fromPos == "a1"){
+        wooo = false;
+    }
+    else if (!boo && fromPos == "h8"){
+        boo = false;
+    }
+    else if (!booo && fromPos == "a8"){
+        booo = false;
+    }
+
+    this->board[positionToSqr(fromPos)] = nullptr;
+    if (legal_move){
+        if (move == "e1g1"){ // if it's a white o-o castling
+            Piece * rook =  this->board[positionToSqr("h1")];
+            this->board[positionToSqr("h1")] = nullptr;// move the rook h1f1
+            this->board[positionToSqr("f1")] = rook;
+        }
+        else if (move == "e1c1"){ // if it's a white o-o-o castling
+            Piece * rook =  this->board[positionToSqr("a1")];
+            this->board[positionToSqr("a1")] = nullptr;// move the rook a1d1
+            this->board[positionToSqr("d1")] = rook;
+        }
+        else if (move == "e8g8"){ // if it's a black o-o castling
+            Piece * rook =  this->board[positionToSqr("h8")];
+            this->board[positionToSqr("h8")] = nullptr;// move the rook h8f8
+            this->board[positionToSqr("f8")] = rook;
+        }
+        else if (move == "e8c8"){ // if it's a black o-o-o castling
+            Piece * rook =  this->board[positionToSqr("a8")];
+            this->board[positionToSqr("a8")] = nullptr;// move the rook a8d8
+            this->board[positionToSqr("d8")] = rook;
+        }
+    }
+    else{ // eating
+        if (this->board[positionToSqr(toPos)] == nullptr){ // en passant
+            std::string targetPos = this->boardFEN->getEnPassant();
+            targetPos[1] += piece->isWhite() ? -1 : 1;
+            delete this->board[positionToSqr(targetPos)];
+            this->board[positionToSqr(targetPos)] = nullptr;
+        }
+        else{
+            delete this->board[positionToSqr(toPos)];
+            this->board[positionToSqr(toPos)] = nullptr;
+        }
+
+    }
+    this->board[positionToSqr(toPos)] = piece;
+    piece->setPosition(toPos);
+
+    this->boardFEN->update(this->board, woo, wooo, boo, booo, enPassant, legal_eat_move);
     return true;
 }
 

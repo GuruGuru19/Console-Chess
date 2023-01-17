@@ -40,6 +40,10 @@ public:
     bool isWhiteTurn(){
         return this->boardFEN->isWhiteTurn();
     }
+
+    FEN * getFEN(){
+        return this->boardFEN;
+    }
 };
 
 

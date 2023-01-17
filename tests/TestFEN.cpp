@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "../include/FEN.h"
+#include "../include/Board.h"
 
 TEST(Test_FEN, correctBuildFEN1Test){
     std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -47,4 +48,8 @@ TEST(Test_FEN, correctBuildFEN4Test){
     EXPECT_FALSE(fen->getBooCastling());
     EXPECT_FALSE(fen->getBoooCastling());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+}
+
+TEST(FENTest, updateTest){
+    // Board::board is private
 }
