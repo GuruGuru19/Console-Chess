@@ -4,10 +4,8 @@
 
 #include "../../include/Pieces/Rook.h"
 
-Rook::Rook(std::string start, bool white) {
+Rook::Rook(std::string start, bool white) : Piece(start, white) {
     this->mark = white?'R':'r';
-    this->position = start;
-    this->white = white;
 }
 
 bool Rook::canMoveGeo(std::string next_position) {

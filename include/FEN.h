@@ -11,8 +11,10 @@
 
 class FEN {
 private:
+    //all the positions in a 64 long string, ' ' is an empty sqr and every other piece is represented by its mark
     std::string positions;
 
+    // read about Forsyth–Edwards Notation https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     bool whiteTurn;
 
     bool white_oo_castling;
@@ -25,7 +27,9 @@ private:
     int halfmoveClock;
     int fullmoveNumber;
 public:
+    //constructor
     FEN(std::string str);
+    //destructor
     FEN(FEN & other);
 
     std::string getPositions(){
@@ -56,6 +60,18 @@ public:
         return this->fullmoveNumber;
     }
 
+
+    /**
+    * updates the FEN
+     * @param board array of piece pointers representing the board
+     * @param woo White king side castling availability
+     * @param wooo White queen side castling availability
+     * @param boo Black king side castling availability
+     * @param booo Black queen side castling availability
+     * @param enPassant En passant target square
+     * @param eat update triggered by a eat move
+     * @param stopTime (default = false) dont advance move counts - relevant when you update the FEN twice in one move (crowning)
+    */
     void update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::string enPassant, bool eat, bool stopTime = false);
 };
 

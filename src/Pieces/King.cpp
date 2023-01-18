@@ -4,10 +4,8 @@
 
 #include "../../include/Pieces/King.h"
 
-King::King(std::string start, bool white) {
+King::King(std::string start, bool white) : Piece(start, white) {
     this->mark = white?'K':'k';
-    this->position = start;
-    this->white = white;
 }
 
 bool King::canMoveGeo(std::string next_position) {

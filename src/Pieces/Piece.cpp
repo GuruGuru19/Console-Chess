@@ -4,10 +4,8 @@
 
 #include "../../include/Pieces/Piece.h"
 
-bool Piece::move(std::string next_position) {
-    if (this->position == next_position){
-        return false;
-    }
-    this->position = next_position;
-    return true;
+Piece::Piece(std::string start, bool white) {
+    this->position = start;
+    this->white = white;
 }
+

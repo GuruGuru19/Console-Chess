@@ -14,19 +14,24 @@ protected:
     std::string position;
     bool white;
 public:
+    // constructor
+    Piece(std::string start, bool white);
+
+    // returns if the piece can move to (next_position) geometrically
     virtual bool canMoveGeo(std::string next_position) = 0;
 
+    // returns if the piece can move to (next_position) geometrically to eat... relevant for the Pawn
     virtual bool canMoveGeoToEat(std::string & next_position) {
         return canMoveGeo(next_position);
     };
 
+    // returns the positions on the path the piece need to take to (next_position)
     virtual std::string getPath(std::string next_position) {
         return "";//the knight and king make jumps so their moves don't have paths
     };
 
+    // returns the positions a piece can move geometrically
     virtual std::string getGeoPossibleMoves() = 0;
-
-    bool move(std::string next_position);
 
 
     bool isWhite() {

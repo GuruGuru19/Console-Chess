@@ -4,10 +4,8 @@
 
 #include "../../include/Pieces/Bishop.h"
 
-Bishop::Bishop(std::string start, bool white) {
+Bishop::Bishop(std::string start, bool white) : Piece(start, white) {
     this->mark = white?'B':'b';
-    this->position = start;
-    this->white = white;
 }
 
 bool Bishop::canMoveGeo(std::string next_position) {

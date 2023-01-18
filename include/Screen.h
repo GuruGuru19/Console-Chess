@@ -23,9 +23,32 @@ public:
     static const std::string DARK_BACK;
     static const std::string LIGHT_BACK;
 
+    /**
+    * @param fen
+    * @return a string representing the board print
+    */
     static std::string buildBoardString(FEN & fen);
+
+    /**
+    * @param c the piece mark
+    * @param dark piece is on a dark color sqr
+    * @return the string representing the sqr
+    */
     static std::string pieceCode(char c, bool dark);
+
+    /**
+     * prints the move dialog
+    * @param fen
+    * @param check is the king checked
+    * @return the user imputed move string
+    */
     static std::string printMoveDialog(FEN & fen, bool check);
+
+    /**
+     * prints the crowning dialog
+    * @param white is the piece white
+    * @return the user imputed new piece mark
+    */
     static char printCrowningDialog(bool white);
 };
 

@@ -4,10 +4,8 @@
 
 #include "../../include/Pieces/Knight.h"
 
-Knight::Knight(std::string start, bool white) {
+Knight::Knight(std::string start, bool white) : Piece(start, white) {
     this->mark = white?'N':'n';
-    this->position = start;
-    this->white = white;
 }
 
 bool Knight::canMoveGeo(std::string next_position) {

@@ -6,10 +6,8 @@
 #include "../../include/Pieces/Bishop.h"
 #include "../../include/Pieces/Rook.h"
 
-Queen::Queen(std::string start, bool white) {
+Queen::Queen(std::string start, bool white) : Piece(start, white) {
     this->mark = white?'Q':'q';
-    this->position = start;
-    this->white = white;
 }
 
 bool Queen::canMoveGeo(std::string next_position) {

@@ -4,10 +4,8 @@
 
 #include "../../include/Pieces/Pawn.h"
 
-Pawn::Pawn(std::string start, bool white) {
+Pawn::Pawn(std::string start, bool white) : Piece(start, white) {
     this->mark = white?'P':'p';
-    this->position = start;
-    this->white = white;
 }
 
 bool Pawn::canMoveGeo(std::string next_position) {

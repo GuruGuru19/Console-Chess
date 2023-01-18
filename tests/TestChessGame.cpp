@@ -32,3 +32,10 @@ TEST(ChessGameTest, kingMate4Test){
     EXPECT_TRUE(chessGame->staleMate());
     delete chessGame;
 }
+
+TEST(ChessGameTest, CrowningTest){
+    std::string fen_string = "2k4P/8/8/8/8/8/8/2K5 b - - 0 1";
+    ChessGame * chessGame = new ChessGame(fen_string);
+    EXPECT_TRUE(!chessGame->Crowning().empty());
+    delete chessGame;
+}
