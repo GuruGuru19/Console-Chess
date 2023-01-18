@@ -13,7 +13,8 @@
 class Board {
 private:
     FEN * boardFEN;
-    Piece ** board;
+//    Piece ** board;
+    Piece *board [64];
 
 public:
     Board(FEN & fen);
@@ -36,6 +37,8 @@ public:
     bool move(std::string move);
 
     std::string getLegalMoves(std::string position);
+
+    void setPiece(Piece * new_piece);
 
     bool isWhiteTurn(){
         return this->boardFEN->isWhiteTurn();

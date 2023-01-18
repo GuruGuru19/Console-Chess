@@ -56,7 +56,7 @@ public:
         return this->fullmoveNumber;
     }
 
-    void update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::string enPassant, bool eat);
+    void update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::string enPassant, bool eat, bool stopTime = false);
 };
 
 

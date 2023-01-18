@@ -12,6 +12,7 @@ TEST(Test_FEN, correctBuildFEN1Test){
     EXPECT_TRUE(fen->getBooCastling());
     EXPECT_TRUE(fen->getBoooCastling());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+    delete fen;
 }
 
 TEST(Test_FEN, correctBuildFEN2Test){
@@ -24,6 +25,7 @@ TEST(Test_FEN, correctBuildFEN2Test){
     EXPECT_TRUE(fen->getBooCastling());
     EXPECT_TRUE(fen->getBoooCastling());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+    delete fen;
 }
 
 TEST(Test_FEN, correctBuildFEN3Test){
@@ -36,6 +38,7 @@ TEST(Test_FEN, correctBuildFEN3Test){
     EXPECT_FALSE(fen->getBooCastling());
     EXPECT_FALSE(fen->getBoooCastling());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+    delete fen;
 }
 
 TEST(Test_FEN, correctBuildFEN4Test){
@@ -48,6 +51,7 @@ TEST(Test_FEN, correctBuildFEN4Test){
     EXPECT_FALSE(fen->getBooCastling());
     EXPECT_FALSE(fen->getBoooCastling());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+    delete fen;
 }
 
 TEST(FENTest, updateTest){

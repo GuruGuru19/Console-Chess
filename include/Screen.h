@@ -26,6 +26,7 @@ public:
     static std::string buildBoardString(FEN & fen);
     static std::string pieceCode(char c, bool dark);
     static std::string printMoveDialog(FEN & fen, bool check);
+    static char printCrowningDialog(bool white);
 };
 
 

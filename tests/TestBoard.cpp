@@ -182,7 +182,7 @@ TEST(BoardTest, move1Test){
 }
 
 
-TEST(BoardTest, moveCastlingTest){
+TEST(BoardTest, moveCastling1Test){
     std::string fen_string = "r3k2r/2q2nb1/2n1b3/pppppppp/PPPPPPPP/4B2N/6B1/RQ1NK2R w KQkq - 14 16";
     FEN * fen = new FEN(fen_string);
     Board * board = new Board(*fen);
@@ -199,6 +199,23 @@ TEST(BoardTest, moveCastlingTest){
     EXPECT_STREQ(board->printBoard().c_str(), "  kr   r\n  q  nb \n  n b   \npppppppp\nPPPPPPPP\n    B  N\n      B \nRQ N RK \n");
 
     delete board; delete fen;
+}
+
+TEST(BoardTest, moveCastling2Test){
+    std::string fen_string = "N3k2r/8/8/8/8/8/8/4K2R w Kk - 0 1";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+
+    EXPECT_STREQ(board->printBoard().c_str(), "N   k  r\n        \n        \n        \n        \n        \n        \n    K  R\n");
+
+    ASSERT_TRUE(board->move("e1g1"));
+    EXPECT_STREQ(board->printBoard().c_str(), "N   k  r\n        \n        \n        \n        \n        \n        \n     RK \n");
+
+    ASSERT_FALSE(board->move("e8g8"));
+    EXPECT_STREQ(board->printBoard().c_str(), "N   k  r\n        \n        \n        \n        \n        \n        \n     RK \n");
+
+    delete board;
+    delete fen;
 }
 
 TEST(BoardTest, moveEnPassantTest){

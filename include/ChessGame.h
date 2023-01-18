@@ -22,8 +22,10 @@ private:
     bool gameLoop();
     void gameEnd();
 
+    std::string Crowning();
     bool kingMate();
     bool staleMate();
+
 
     FRIEND_TEST(ChessGameTest, kingMate1Test);
     FRIEND_TEST(ChessGameTest, kingMate2Test);

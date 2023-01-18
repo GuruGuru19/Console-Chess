@@ -4,12 +4,17 @@
 
 #include <iostream>
 #include "../include/ChessGame.h"
+#include "../include/Pieces/Queen.h"
+#include "../include/Pieces/Bishop.h"
+#include "../include/Pieces/Knight.h"
+#include "../include/Pieces/Rook.h"
 
 ChessGame::ChessGame(std::string & fenstr) {
     FEN * fen = new FEN(fenstr);
     this->board = new Board(*fen);
     this->whiteName = "";
     this->blackName = "";
+    delete fen;
 }
 
 ChessGame::~ChessGame() {
@@ -52,24 +57,73 @@ bool ChessGame::gameLoop() {
         std::cout << "=================================" << std::endl;
         std::cout << "Illegal move! try again" << std::endl;
     }
+
     this->board->move(move);
+
+    std::string crowning_pos = Crowning();
+    if (!crowning_pos.empty()){
+        char new_mark = Screen::printCrowningDialog(white_turn);
+        Piece * piece;
+        if (new_mark == 'r' || new_mark == 'R'){
+            piece = new Rook(crowning_pos, new_mark == 'R');
+            this->board->setPiece(piece);
+        }
+        else if (new_mark == 'n' || new_mark == 'N'){
+            piece = new Knight(crowning_pos, new_mark == 'N');
+            this->board->setPiece(piece);
+        }
+        else if (new_mark == 'b' || new_mark == 'B'){
+            piece = new Bishop(crowning_pos, new_mark == 'B');
+            this->board->setPiece(piece);
+        }
+        else if (new_mark == 'q' || new_mark == 'Q'){
+            piece = new Queen(crowning_pos, new_mark == 'Q');
+            this->board->setPiece(piece);
+        }
+        else{
+            std::cout << "\nERROR\n\n";
+        }
+    }
 
     return true;
 }
 
-void ChessGame::gameEnd() { //TODO
+void ChessGame::gameEnd() {
     bool white_turn = board->isWhiteTurn();
     if (kingMate()){
         std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"mCheck mate!\33[0m\n";
         std::cout << msg << (white_turn? "Black (": "White (") << (white_turn? this->blackName: this->whiteName) << ") wins!";
     }
     else if (staleMate()){
-        std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"Stale mate!\33[0m\n";
+        std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"mStale mate!\33[0m\n";
         std::cout << msg << "Draw";
     }
     else{
 
     }
+}
+
+std::string ChessGame::Crowning() {
+    bool white_turn = !this->board->isWhiteTurn();// this code is run after the move
+    if (white_turn){
+        for (int i = 0; i < 8; ++i) {
+            std::string pos = Board::sqrToPosition(i);
+            Piece * piece = this->board->getPiece(pos);
+            if (piece != nullptr && piece->getMark() == 'P'){
+                return pos;
+            }
+        }
+    }
+    else{
+        for (int i = 56; i < 64; ++i) {
+            std::string pos = Board::sqrToPosition(i);
+            Piece * piece = this->board->getPiece(pos);
+            if (piece != nullptr && piece->getMark() == 'p'){
+                return pos;
+            }
+        }
+    }
+    return "";
 }
 
 bool ChessGame::kingMate() {

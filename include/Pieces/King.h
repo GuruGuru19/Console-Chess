@@ -14,7 +14,7 @@ public:
 
     bool canMoveGeo(std::string next_position) override;
     // doesn't need canMoveGeoToEat()
-    // doesn't need getPath()
+    std::string getPath(std::string next_position) override;
     std::string getGeoPossibleMoves() override;
 
     int isCastling(std::string next_position);

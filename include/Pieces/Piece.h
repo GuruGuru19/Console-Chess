@@ -40,6 +40,9 @@ public:
     void setPosition(std::string new_position){
         this->position = new_position;
     };
+    std::string getPosition(){
+        return this->position;
+    };
 };
 
 

@@ -6,6 +6,7 @@ TEST(ChessGameTest, kingMate1Test){
     ChessGame * chessGame = new ChessGame(fen_string);
     EXPECT_FALSE(chessGame->kingMate());
     EXPECT_FALSE(chessGame->staleMate());
+    delete chessGame;
 }
 
 TEST(ChessGameTest, kingMate2Test){
@@ -13,6 +14,7 @@ TEST(ChessGameTest, kingMate2Test){
     ChessGame * chessGame = new ChessGame(fen_string);
     EXPECT_TRUE(chessGame->kingMate());
     EXPECT_FALSE(chessGame->staleMate());
+    delete chessGame;
 }
 
 TEST(ChessGameTest, kingMate3Test){
@@ -20,6 +22,7 @@ TEST(ChessGameTest, kingMate3Test){
     ChessGame * chessGame = new ChessGame(fen_string);
     EXPECT_TRUE(chessGame->kingMate());
     EXPECT_FALSE(chessGame->staleMate());
+    delete chessGame;
 }
 
 TEST(ChessGameTest, kingMate4Test){
@@ -27,4 +30,5 @@ TEST(ChessGameTest, kingMate4Test){
     ChessGame * chessGame = new ChessGame(fen_string);
     EXPECT_FALSE(chessGame->kingMate());
     EXPECT_TRUE(chessGame->staleMate());
+    delete chessGame;
 }

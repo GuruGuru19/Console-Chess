@@ -83,3 +83,30 @@ std::string Screen::printMoveDialog(FEN & fen, bool check) {
     std::cin >> move;
     return move;
 }
+
+char Screen::printCrowningDialog(bool white) {
+    char mark;
+    while (true){
+        std::string msg = "=================================\n";
+        msg.append("1-Bishop, 2-Knight, 3-Rook, 4-Queen\n");
+        msg.append("Crown your Pawn:");
+        std::cout << msg;
+
+        std::string piece_code;
+        std::cin >> piece_code;
+
+        if (piece_code == "1"){
+            return white?'B':'b';
+        }
+        if (piece_code == "2"){
+            return white?'N':'n';
+        }
+        if (piece_code == "3"){
+            return white?'R':'r';
+        }
+        if (piece_code == "4"){
+            return white?'Q':'q';
+        }
+        std::cout << "invalid!\n";
+    }
+}

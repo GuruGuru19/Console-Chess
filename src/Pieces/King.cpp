@@ -23,6 +23,26 @@ bool King::canMoveGeo(std::string next_position) {
     return x_move_size < 2 && y_move_size < 2 && !(x_move_size == 0 && y_move_size == 0);
 }
 
+std::string King::getPath(std::string next_position) {
+    if (isWhite() && this->position == "e1"){
+        if (next_position == "g1"){
+            return "f1";
+        }
+        if (next_position == "c1") {
+            return "d1";
+        }
+    }
+    else if (!isWhite() && this->position == "e8"){
+        if (next_position == "g8"){
+            return "f8";
+        }
+        if (next_position == "c8"){
+            return "d8";
+        }
+    }
+    return "";
+}
+
 std::string King::getGeoPossibleMoves() {
     std::string positions;
     if (isWhite() && this->position == "e1"){
