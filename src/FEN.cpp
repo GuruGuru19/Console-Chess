@@ -5,6 +5,7 @@
 #include "../include/FEN.h"
 
 FEN::FEN(std::string str) { // assumes the str is valid
+    //please don't try
     this->positions = "";
     int i = 0;
     char c;

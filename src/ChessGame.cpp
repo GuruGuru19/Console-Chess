@@ -43,13 +43,13 @@ bool ChessGame::gameLoop() {
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
     bool king_checked = !kingThreateners.empty();
-    if ((king_checked && kingMate()) || staleMate()){
+    if ((king_checked && kingMate()) || staleMate()){ // if the game needs to end
         std::cout << Screen::buildBoardString(*fen) << std::endl;
         return false;
     }
 
     std::string move;
-    while (true){
+    while (true){  // until the move is legal
         move = Screen::printMoveDialog(*fen, king_checked);
         if (this->board->legalMove(move) || this->board->legalEatMove(move)){
             break;
@@ -58,12 +58,13 @@ bool ChessGame::gameLoop() {
         std::cout << "Illegal move! try again" << std::endl;
     }
 
-    this->board->move(move);
+    this->board->move(move); // make the move
 
     std::string crowning_pos = Crowning();
-    if (!crowning_pos.empty()){
-        char new_mark = Screen::printCrowningDialog(white_turn);
+    if (!crowning_pos.empty()){ // the move result in a crowning
+        char new_mark = Screen::printCrowningDialog(white_turn); // gets the new piece mark
         Piece * piece;
+        // puts it on the board
         if (new_mark == 'r' || new_mark == 'R'){
             piece = new Rook(crowning_pos, new_mark == 'R');
             this->board->setPiece(piece);
@@ -81,7 +82,7 @@ bool ChessGame::gameLoop() {
             this->board->setPiece(piece);
         }
         else{
-            std::cout << "\nERROR\n\n";
+            std::cout << "\nERROR\n\n"; // isn't supposed to get here
         }
     }
 
@@ -90,6 +91,7 @@ bool ChessGame::gameLoop() {
 
 void ChessGame::gameEnd() {
     bool white_turn = board->isWhiteTurn();
+    // print the game result
     if (kingMate()){
         std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"mCheck mate!\33[0m\n";
         std::cout << msg << (white_turn? "Black (": "White (") << (white_turn? this->blackName: this->whiteName) << ") wins!";
@@ -104,9 +106,11 @@ void ChessGame::gameEnd() {
 }
 
 std::string ChessGame::Crowning() {
-    bool white_turn = !this->board->isWhiteTurn();// this code is run after the move
+    // this code is run after the move
+    bool white_turn = !this->board->isWhiteTurn();
+
     if (white_turn){
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < 8; ++i) { // search for a pawn on the '8' line
             std::string pos = Board::sqrToPosition(i);
             Piece * piece = this->board->getPiece(pos);
             if (piece != nullptr && piece->getMark() == 'P'){
@@ -115,7 +119,7 @@ std::string ChessGame::Crowning() {
         }
     }
     else{
-        for (int i = 56; i < 64; ++i) {
+        for (int i = 56; i < 64; ++i) { // search for a pawn on the '1' line
             std::string pos = Board::sqrToPosition(i);
             Piece * piece = this->board->getPiece(pos);
             if (piece != nullptr && piece->getMark() == 'p'){
@@ -128,26 +132,25 @@ std::string ChessGame::Crowning() {
 
 bool ChessGame::kingMate() {
     bool white_turn = this->board->isWhiteTurn();
-    std::string kingPos = this->board->getKingPosition(white_turn);
+    std::string kingPos = this->board->getKingPosition(white_turn); // king's position
 
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn, true);
     if (!kingThreateners.empty()){ // the (active_color)'s king is checked
-        //if the king can run away
         if (!this->board->getLegalMoves(kingPos).empty()){
-            return false;
-        } else if (kingThreateners.size() > 2){
-            return true; // if there are more than 1 Threatener the king can only run away
+            return false; //if the king can run away
+        } else if (kingThreateners.size()/2 > 1){ // if there are more than 1 Threatener the king can only run away
+            return true;
         }
 
         bool canEatThreatener = this->board->sqrThreatener(kingThreateners, !white_turn, true).empty() &&
                 board->legalEatMove(kingPos+kingThreateners);
-        if (canEatThreatener){
+        if (canEatThreatener){ // if someone can eat the threatener
             return false;
         }
 
         Piece * kingThreatenerPiece = this->board->getPiece(kingThreateners);
-        std::string path = kingThreatenerPiece->getPath(kingPos);
+        std::string path = kingThreatenerPiece->getPath(kingPos); // the path the threatener needs to take
         // if the move is to block the Threatener
         for (int i = 0; i < path.size()/2; ++i) {
             std::string pos = path.substr(i*2, 2);
@@ -174,5 +177,5 @@ bool ChessGame::staleMate() {
             return false; // for every (same color) piece -> do you have possible moves?
         }
     }
-    return true; // if none of the color's pieces have moves
+    return true; // if none of the color's pieces have legal moves -> stale mate
 }

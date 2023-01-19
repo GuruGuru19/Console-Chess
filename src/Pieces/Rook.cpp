@@ -40,11 +40,11 @@ std::string Rook::getGeoPossibleMoves() {
     std::string positions;
     for (char c = '1'; c <= '8'; ++c) {
         std::string pos; pos+=this->position[0]; pos+=c;
-        positions.append(pos);
+        positions.append(pos != this->position ? pos : ""); // adds every position on the line (ignores this->position)
     }
     for (char c = 'a'; c <= 'h'; ++c) {
         std::string pos; pos+=c; pos+=this->position[1];
-        positions.append(pos);
+        positions.append(pos != this->position ? pos : ""); // adds every position on the column (ignores this->position)
     }
     return positions;
 }

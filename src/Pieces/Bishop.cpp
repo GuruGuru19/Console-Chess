@@ -40,23 +40,23 @@ std::string Bishop::getPath(std::string next_position) {
 std::string Bishop::getGeoPossibleMoves() {
     std::string diagonal_1_start = this->position;
     std::string diagonal_2_start = this->position;
-    while (diagonal_1_start[0] > 'a' && diagonal_1_start[1] > '1'){
+    while (diagonal_1_start[0] > 'a' && diagonal_1_start[1] > '1'){ // takes the position as back and down as it can
         diagonal_1_start[0]-=1;
         diagonal_1_start[1]+=1;
     }
-    while (diagonal_2_start[0] > 'a' && diagonal_2_start[1] > '1'){
+    while (diagonal_2_start[0] > 'a' && diagonal_2_start[1] > '1'){ // takes the position as back and up as it can
         diagonal_2_start[0]-=1;
         diagonal_2_start[1]-=1;
     }
 
     std::string positions;
-    while (diagonal_1_start[0] <= 'h' && diagonal_1_start[1] <= '8'){
-        positions.append(diagonal_1_start);
+    while (diagonal_1_start[0] <= 'h' && diagonal_1_start[1] <= '8'){ // takes the position as front and up as it can
+        positions.append(diagonal_1_start != this->position ? diagonal_1_start : ""); // adds the positions on the way and ignores this.position
         diagonal_1_start[0]+=1;
         diagonal_1_start[1]-=1;
     }
-    while (diagonal_2_start[0] <= 'h' && diagonal_2_start[1] <= '8'){
-        positions.append(diagonal_2_start);
+    while (diagonal_2_start[0] <= 'h' && diagonal_2_start[1] <= '8'){// takes the position as front and down as it can
+        positions.append(diagonal_2_start != this->position ? diagonal_2_start : ""); // adds the positions on the way and ignores this.position
         diagonal_2_start[0]+=1;
         diagonal_2_start[1]+=1;
     }

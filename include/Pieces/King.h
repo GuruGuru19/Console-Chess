@@ -17,6 +17,10 @@ public:
     std::string getPath(std::string next_position) override;
     std::string getGeoPossibleMoves() override;
 
+    /**
+    * @param next_position position to move to
+    * @return what type of castling (1-4 woo-booo) returns 0 if its not a castling
+    */
     int isCastling(std::string next_position);
 };
 
