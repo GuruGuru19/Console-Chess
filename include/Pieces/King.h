@@ -6,14 +6,13 @@
 #define ITAI_CHESS_KING_H
 
 #include <string>
-#include "Piece.h"
+#include "../Piece.h"
 
 class King : public Piece{
 public:
     King(std::string start, bool white);
 
     bool canMoveGeo(std::string next_position) override;
-    // doesn't need canMoveGeoToEat()
     std::string getPath(std::string next_position) override;
     std::string getGeoPossibleMoves() override;
 

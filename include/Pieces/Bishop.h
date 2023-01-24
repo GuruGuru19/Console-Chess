@@ -7,15 +7,13 @@
 
 
 #include <string>
-#include "Piece.h"
+#include "../Piece.h"
 
 class Bishop : public Piece{
 public:
     Bishop(std::string start, bool white);
 
     bool canMoveGeo(std::string next_position) override;
-    // CR: no need to mention
-    // doesn't need canMoveGeoToEat()
     std::string getPath(std::string next_position) override;
     std::string getGeoPossibleMoves() override;
 };

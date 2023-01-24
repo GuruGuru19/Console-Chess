@@ -8,7 +8,7 @@
 
 #include <list>
 #include "FEN.h"
-#include "Pieces/Piece.h"
+#include "Piece.h"
 
 class Board {
 private:
@@ -61,9 +61,10 @@ public:
     // CR: didn't mention the move has to be in the bounds of the board
     /**
     * @param move a 4 char string (2 positions) that represent a move on the board
+    * @param ignorePos (default = "") a position to ignore on the way
     * @return is the move path is clear of pieces
     */
-    bool movePathClear(std::string move);
+    bool movePathClear(std::string move, std::string ignorePos = "");
 
     /**
     * @param position position on the board
@@ -73,7 +74,7 @@ public:
     * @param moveToEat (default = true) is the move to the sqr considered an "eat move"
     * @return is the piece on (position) pinned
     */
-    std::string sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned = false, bool moveToEat = true);
+    std::string sqrThreatener(const std::string& position, bool threatenedByWhite, bool ignorePinned = false, bool moveToEat = true);
 
     /**
     * @param position position on the board

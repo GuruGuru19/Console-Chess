@@ -8,10 +8,10 @@ TEST(Test_FEN, correctBuildFEN1Test){
     FEN * fen = new FEN(fen_string);
     EXPECT_STREQ(fen->getPositions().c_str(), "rnbqkbnrpppppppp                                PPPPPPPPRNBQKBNR");
     EXPECT_TRUE(fen->isWhiteTurn());
-    EXPECT_TRUE(fen->getWooCastling());
-    EXPECT_TRUE(fen->getWoooCastling());
-    EXPECT_TRUE(fen->getBooCastling());
-    EXPECT_TRUE(fen->getBoooCastling());
+    EXPECT_TRUE(fen->canWooCastle());
+    EXPECT_TRUE(fen->canWoooCastle());
+    EXPECT_TRUE(fen->canBooCastle());
+    EXPECT_TRUE(fen->canBoooCastle());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
     delete fen;
 }
@@ -21,10 +21,10 @@ TEST(Test_FEN, correctBuildFEN2Test){
     FEN * fen = new FEN(fen_string);
     EXPECT_STREQ(fen->getPositions().c_str(), "rnbqkbnrpp ppppp          p         P        N  PPPP PPPRNBQKB R");
     EXPECT_FALSE(fen->isWhiteTurn());
-    EXPECT_TRUE(fen->getWooCastling());
-    EXPECT_TRUE(fen->getWoooCastling());
-    EXPECT_TRUE(fen->getBooCastling());
-    EXPECT_TRUE(fen->getBoooCastling());
+    EXPECT_TRUE(fen->canWooCastle());
+    EXPECT_TRUE(fen->canWoooCastle());
+    EXPECT_TRUE(fen->canBooCastle());
+    EXPECT_TRUE(fen->canBoooCastle());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
     delete fen;
 }
@@ -34,10 +34,10 @@ TEST(Test_FEN, correctBuildFEN3Test){
     FEN * fen = new FEN(fen_string);
     EXPECT_STREQ(fen->getPositions().c_str(), "r b   nrpppk  qp bnp        p BQ  BPP     P     PP   PPPRN   RK ");
     EXPECT_TRUE(fen->isWhiteTurn());
-    EXPECT_FALSE(fen->getWooCastling());
-    EXPECT_FALSE(fen->getWoooCastling());
-    EXPECT_FALSE(fen->getBooCastling());
-    EXPECT_FALSE(fen->getBoooCastling());
+    EXPECT_FALSE(fen->canWooCastle());
+    EXPECT_FALSE(fen->canWoooCastle());
+    EXPECT_FALSE(fen->canBooCastle());
+    EXPECT_FALSE(fen->canBoooCastle());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
     delete fen;
 }
@@ -47,10 +47,10 @@ TEST(Test_FEN, correctBuildFEN4Test){
     FEN * fen = new FEN(fen_string);
     EXPECT_STREQ(fen->getPositions().c_str(), "r   k  rpppq p p  np bpB    p     PNP  P PN   P P P BP   R  K  R");
     EXPECT_FALSE(fen->isWhiteTurn());
-    EXPECT_TRUE(fen->getWooCastling());
-    EXPECT_FALSE(fen->getWoooCastling());
-    EXPECT_FALSE(fen->getBooCastling());
-    EXPECT_FALSE(fen->getBoooCastling());
+    EXPECT_TRUE(fen->canWooCastle());
+    EXPECT_FALSE(fen->canWoooCastle());
+    EXPECT_FALSE(fen->canBooCastle());
+    EXPECT_FALSE(fen->canBoooCastle());
     EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
     delete fen;
 }

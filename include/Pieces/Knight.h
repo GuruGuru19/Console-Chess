@@ -6,15 +6,16 @@
 #define ITAI_CHESS_KNIGHT_H
 
 
-#include "Piece.h"
+#include "../Piece.h"
 
 class Knight : public Piece{
 public:
     Knight(std::string start, bool white);
 
     bool canMoveGeo(std::string next_position) override;
-    // doesn't need canMoveGeoToEat()
-    // doesn't need getPath()
+    std::string getPath(std::string next_position) override{
+        return "";  //the knight make jumps so their moves don't have paths
+    };
     std::string getGeoPossibleMoves() override;
 };
 

@@ -24,21 +24,27 @@ const std::string Screen::LIGHT_BACK = BLUE_BACK;
 std::string Screen::buildBoardString(FEN & fen) {
     std::string str = "";
     std::string positions = fen.getPositions();
+
     str.append("   A  B  C  D  E  F  G  H\n");
+
     int sqr = 0;
     for (int x = 8; x >= 1; --x) {
         str.append(std::to_string(x) + " ");
+
         for (char y = 'A'; y <= 'H'; ++y) {
             // CR: complex command
             str.append(pieceCode(positions[sqr + (-x+8)], sqr%2==1));
             sqr++;
         }
+
         str.append(" " + std::to_string(x));
         str.append("\n");
         // CR: why?
         sqr--;
     }
+
     str.append("   A  B  C  D  E  F  G  H");
+
     return str;
 }
 
@@ -94,8 +100,6 @@ std::string Screen::printMoveDialog(FEN & fen, bool check) {
 }
 
 char Screen::printCrowningDialog(bool white) {
-    // CR: you don't use this var anywhere
-    char mark;
     while (true){
         std::string msg = "=================================\n";
         msg.append("1-Bishop, 2-Knight, 3-Rook, 4-Queen\n");

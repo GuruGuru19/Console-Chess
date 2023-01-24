@@ -4,7 +4,7 @@ project(itai_chess)
 set(CMAKE_CXX_STANDARD 14)
 
 set(src_files
-        src/Pieces/Piece.cpp
+        src/Piece.cpp
         src/Pieces/King.cpp
         src/Pieces/Queen.cpp
         src/Pieces/Rook.cpp
@@ -17,7 +17,7 @@ set(src_files
         src/FEN.cpp
         )
 set(include_files
-        include/Pieces/Piece.h
+        include/Piece.h
         include/Pieces/King.h
         include/Pieces/Queen.h
         include/Pieces/Rook.h
@@ -62,10 +62,10 @@ target_link_libraries(
         GTest::gtest_main
 )
 # CR: you don't need to link itai_chess to gtest. This can cause problems in build&run.
-#target_link_libraries(
-#        itai_chess
-#        GTest::gtest_main
-#)
+target_link_libraries(
+        itai_chess
+        GTest::gtest_main
+)
 include(GoogleTest)
 gtest_discover_tests(itai_chess_tests)
 #testing

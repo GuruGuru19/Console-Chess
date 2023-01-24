@@ -50,12 +50,13 @@ std::string Queen::getPath(std::string next_position) {
 }
 
 std::string Queen::getGeoPossibleMoves() {
-    // CR: this is not optimal in my opinion
     Bishop * bishop = new Bishop(this->position, true);
     Rook * rook = new Rook(this->position, true);
+
     std::string positions;
     positions.append(bishop->getGeoPossibleMoves());
     positions.append(rook->getGeoPossibleMoves());
+
     delete bishop; delete rook;
     return positions;
 }

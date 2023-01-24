@@ -19,8 +19,9 @@ bool King::canMoveGeo(std::string next_position) {
     int x_move_size = abs(this->position[0] - next_position[0]);
     int y_move_size = abs(this->position[1] - next_position[1]);
 
-    // CR: long condition
-    return x_move_size < 2 && y_move_size < 2 && !(x_move_size == 0 && y_move_size == 0);
+    bool moving = this->position != next_position;
+    bool one_step = x_move_size < 2 && y_move_size < 2;
+    return one_step && moving;
 }
 
 std::string King::getPath(std::string next_position) {
@@ -40,7 +41,7 @@ std::string King::getPath(std::string next_position) {
             return "d8";
         }
     }
-    // CR: should be else in my opinion
+
     return "";
 }
 
@@ -67,18 +68,21 @@ std::string King::getGeoPossibleMoves() {
 }
 
 int King::isCastling(std::string next_position) {
-    // CR: change structure of the conditions
-    if (isWhite() && this->position == "e1" && next_position == "g1"){
-        return 1;//w o-o
+    if (isWhite() && this->position == "e1"){
+        if (next_position == "g1"){
+            return 1; // w o-o
+        }
+        if (next_position == "c1") {
+            return 2; // w o-o-o
+        }
     }
-    else if (isWhite() && this->position == "e1" && next_position == "c1"){
-        return 2;//w o-o-o
-    }
-    else if (!isWhite() && this->position == "e8" && next_position == "g8"){
-        return 3;//b o-o
-    }
-    else if (!isWhite() && this->position == "e8" && next_position == "c8"){
-        return 4;//b o-o-o
+    else if (!isWhite() && this->position == "e8"){
+        if (next_position == "g8"){
+            return 3; // b o-o
+        }
+        if (next_position == "c8"){
+            return 4; // b o-o-o
+        }
     }
     return 0;
 }

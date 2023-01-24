@@ -7,12 +7,12 @@
 
 
 #include <string>
-#include "Pieces/Piece.h"
+#include "Piece.h"
 
 class FEN {
 private:
     // CR: explanation
-    //all the positions in a 64 long string, ' ' is an empty sqr and every other piece is represented by its mark
+    //all the positions in a 64 long string, ' ' is an empty sqr and every other piece is represented by its mark from the fen
     std::string positions;
 
     // read about Forsyth–Edwards Notation https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
@@ -31,8 +31,7 @@ public:
     // CR: better to receive a const string.
     //constructor
     FEN(std::string str);
-    // CR: how is this a destructor?
-    //destructor
+    //copy constructor
     FEN(FEN & other);
 
     std::string getPositions(){
@@ -41,17 +40,17 @@ public:
     bool isWhiteTurn() const{
         return this->whiteTurn;
     };
-    // CR: naming
-    bool getWooCastling() const{
+
+    bool canWooCastle() const{
         return this->white_oo_castling;
     }
-    bool getWoooCastling() const{
+    bool canWoooCastle() const{
         return this->white_ooo_castling;
     }
-    bool getBooCastling() const{
+    bool canBooCastle() const{
         return this->black_oo_castling;
     }
-    bool getBoooCastling() const{
+    bool canBoooCastle() const{
         return this->black_ooo_castling;
     }
     std::string getEnPassant(){
@@ -64,20 +63,28 @@ public:
         return this->fullmoveNumber;
     }
 
+    void setWooCastling(bool value){
+        this->white_oo_castling = value;
+    }
+    void setWoooCastling(bool value){
+        this->white_ooo_castling = value;
+    }
+    void setBooCastling(bool value){
+        this->black_oo_castling = value;
+    }
+    void setBoooCastling(bool value){
+        this->black_ooo_castling = value;
+    }
 
-    // CR: you sure you want each time to update all the elements in the fen and not create a setter for each?
+
     /**
     * updates the FEN
      * @param board array of piece pointers representing the board
-     * @param woo White king side castling availability
-     * @param wooo White queen side castling availability
-     * @param boo Black king side castling availability
-     * @param booo Black queen side castling availability
      * @param enPassant En passant target square
      * @param eat update triggered by a eat move
      * @param stopTime (default = false) dont advance move counts - relevant when you update the FEN twice in one move (crowning)
     */
-    void update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::string enPassant, bool eat, bool stopTime = false);
+    void update(Piece ** board, std::string enPassant, bool eat, bool stopTime = false);
 };
 
 

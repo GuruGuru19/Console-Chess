@@ -4,33 +4,21 @@
 
 #include "../include/FEN.h"
 
-// CR: assumptions should go in the docs
-// CR: how could this be solved?
 FEN::FEN(std::string str) { // assumes the str is valid
-    // CR: didn't understand
-    //please don't try
-    // CR: don't think this is needed
-    this->positions = "";
     int i = 0;
     char c;
     while(this->positions.size() < 64){
         c = str[i];
-        // CR: why not use if else?
         if ((c <= 'z' && c >= 'a')||(c <= 'Z' && c >= 'A')){
             positions += c;
             i++;
-            continue;
         }
-        if (c == '/'){
+        else if (c == '/'){
             i++;
-            continue;
         }
-        if (c <= '8' && c >= '1'){
+        else if (c <= '8' && c >= '1'){
             int n = ((int)(c - '0'));
-            // CR: https://stackoverflow.com/questions/7897163/stdcout-to-print-character-n-times
-            for (int j = 0; j < n; ++j) {
-                positions += ' ';
-            }
+            positions += std::string(n, ' ');
             i ++;
             continue;
         }
@@ -41,10 +29,10 @@ FEN::FEN(std::string str) { // assumes the str is valid
     str = str.substr(i);
     i = 0;
 
-    // CR: try not doing two actions in the same line as it can be confusing about the ordering of the execution
-    c = str[i++];
-    // CR: comment?
-    this->whiteTurn = c == 'w';// 'w' or 'b'
+    c = str[i];
+    i++;
+
+    this->whiteTurn = c == 'w';// c can be 'w' or 'b'
     i++;//for the space
     str = str.substr(i);
     i = 0;
@@ -75,6 +63,12 @@ FEN::FEN(std::string str) { // assumes the str is valid
             }
         }
     }
+//    if (castling[0] != '-'){
+//        this->white_oo_castling = castling.find('K') < castling.size();
+//        this->white_ooo_castling = castling.find('Q') < castling.size();
+//        this->black_oo_castling = castling.find('k') < castling.size();
+//        this->black_ooo_castling = castling.find('q') < castling.size();
+//    }
     i += str.find(' ') + 1;//for the space
     str = str.substr(i);
     i = 0;
@@ -94,7 +88,6 @@ FEN::FEN(std::string str) { // assumes the str is valid
 
     int space = str.find(' ');
     std::string halfmove_clock = str.substr(0,space);
-    // CR: why not use basic conversion of (int)?
     this->halfmoveClock = std::stoi(halfmove_clock);
     std::string fullmove_number = str.substr(space+1);
     this->fullmoveNumber = std::stoi(fullmove_number);
@@ -116,7 +109,7 @@ FEN::FEN(FEN &other) {
     this->fullmoveNumber = other.fullmoveNumber;
 }
 
-void FEN::update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::string enPassant, bool eat, bool stopTime) {
+void FEN::update(Piece ** board, std::string enPassant, bool eat, bool stopTime) {
     std::string new_positions;
     for (int i = 0; i < 64; ++i) {
         if (board[i] == nullptr){
@@ -128,11 +121,6 @@ void FEN::update(Piece ** board, bool woo, bool wooo, bool boo, bool booo, std::
     this->positions = new_positions;
 
     this->whiteTurn = stopTime? this->whiteTurn : !this->whiteTurn;
-
-    this->white_oo_castling = woo;
-    this->white_ooo_castling = wooo;
-    this->black_oo_castling = boo;
-    this->black_ooo_castling = booo;
 
     this->enPassant = enPassant.size() != 2 ? "-" : enPassant;
 

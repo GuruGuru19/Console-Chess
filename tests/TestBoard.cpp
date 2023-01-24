@@ -311,3 +311,11 @@ TEST(BoardTest, KupperGameBug){
     EXPECT_TRUE(board->legalMove("d8d7"));
     delete board; delete fen;
 }
+
+TEST(ChessGameTest, itayGameBug){
+    std::string fen_string = "rnb2bnr/ppppk2p/8/1BN2pP1/4B3/1Q6/PPPPPP1P/Rq2K1NR w KQ - 0 1";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+    EXPECT_FALSE(board->legalMove("e1f1"));
+    delete board; delete fen;
+}

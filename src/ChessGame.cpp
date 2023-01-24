@@ -41,11 +41,8 @@ bool ChessGame::gameLoop() {
     FEN * fen = this->board->getFEN();
     std::string kingPos = this->board->getKingPosition(white_turn);
 
-    // position of a piece that is threatening the king
-    std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
-    bool king_checked = !kingThreateners.empty();
-    // CR: why do I need this(king_checked) check? it already happens inside the other checks
-    if ((king_checked && kingMate()) || staleMate()){ // if the game needs to end
+
+    if (kingMate() || staleMate()){ // if the game needs to end
         std::cout << Screen::buildBoardString(*fen) << std::endl;
         return false;
     }
@@ -53,11 +50,15 @@ bool ChessGame::gameLoop() {
     std::string move;
     // CR: change the true & break
     while (true){  // until the move is legal
+        // position of a piece that is threatening the king
+        std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
+        bool king_checked = !kingThreateners.empty();
         move = Screen::printMoveDialog(*fen, king_checked);
         if (this->board->legalMove(move) || this->board->legalEatMove(move)){
             break;
         }
         std::cout << "=================================" << std::endl;
+        // CR: should print white on red
         std::cout << "Illegal move! try again" << std::endl;
     }
 
@@ -139,42 +140,41 @@ std::string ChessGame::Crowning() {
     return "";
 }
 
-// CR: why not get the kingThreaterners from calling function?
 bool ChessGame::kingMate() {
     bool white_turn = this->board->isWhiteTurn();
     std::string kingPos = this->board->getKingPosition(white_turn); // king's position
 
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn, true);
-    // CR: garbage condition
-    if (!kingThreateners.empty()){ // the (active_color)'s king is checked
-        if (!this->board->getLegalMoves(kingPos).empty()){
-            return false; //if the king can run away
-        } else if (kingThreateners.size()/2 > 1){ // if there are more than 1 Threatener the king can only run away
-            return true;
-        }
+    if (kingThreateners.empty()){
+        return false;
+    }
 
-        // CR: change logic
-        bool canEatThreatener = this->board->sqrThreatener(kingThreateners, !white_turn, true).empty() &&
-                board->legalEatMove(kingPos+kingThreateners);
-        if (canEatThreatener){ // if someone can eat the threatener
-            return false;
-        }
-
-        Piece * kingThreatenerPiece = this->board->getPiece(kingThreateners);
-        std::string path = kingThreatenerPiece->getPath(kingPos); // the path the threatener needs to take
-        // if the move is to block the Threatener
-        for (int i = 0; i < path.size()/2; ++i) {
-            std::string pos = path.substr(i*2, 2);
-            std::string path_blocker_pos = this->board->sqrThreatener(pos, white_turn, false, false).substr(0,2);
-            if (!path_blocker_pos.empty() &&
-            (this->board->getPiece(path_blocker_pos)->getMark()!='K' && this->board->getPiece(path_blocker_pos)->getMark()!='k')){
-                return false;
-            }
-        }
+    if (!this->board->getLegalMoves(kingPos).empty()){
+        return false; //if the king can run away
+    } else if (kingThreateners.size()/2 > 1){ // if there are more than 1 Threatener the king can only run away
         return true;
     }
-    return false;
+
+    // CR: change logic
+    bool kingCanEatThreatener = this->board->sqrThreatener(kingThreateners, !white_turn, true).empty() &&
+                                board->legalEatMove(kingPos+kingThreateners);
+    if (kingCanEatThreatener){ // if someone can eat the threatener
+        return false;
+    }
+
+    Piece * kingThreatenerPiece = this->board->getPiece(kingThreateners);
+    std::string path = kingThreatenerPiece->getPath(kingPos); // the path the threatener needs to take
+    // if the move is to block the Threatener
+    for (int i = 0; i < path.size()/2; ++i) {
+        std::string pos = path.substr(i*2, 2);
+        std::string path_blocker_pos = this->board->sqrThreatener(pos, white_turn, false, false).substr(0,2);
+        if (!path_blocker_pos.empty() &&
+            (this->board->getPiece(path_blocker_pos)->getMark()!='K' && this->board->getPiece(path_blocker_pos)->getMark()!='k')){
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ChessGame::staleMate() {

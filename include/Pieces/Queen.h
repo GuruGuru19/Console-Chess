@@ -7,7 +7,7 @@
 
 
 #include <string>
-#include "Piece.h"
+#include "../Piece.h"
 
 class Queen : public Piece{
 public:

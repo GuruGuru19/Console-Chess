@@ -6,7 +6,7 @@
 #define ITAI_CHESS_ROOK_H
 
 #include <string>
-#include "Piece.h"
+#include "../Piece.h"
 
 class Rook : public Piece{
 public:

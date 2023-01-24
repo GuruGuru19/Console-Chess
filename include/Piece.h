@@ -8,7 +8,6 @@
 
 #include <string>
 
-// CR: this class should appear outside the pieces directory
 class Piece {
 protected:
     char mark;
@@ -19,7 +18,11 @@ public:
     // constructor
     Piece(std::string start, bool white);
 
-    // returns if the piece can move to (next_position) geometrically
+    /**
+     * checks if the move is possible by the piece's movement laws
+     * @param next_position  a 2 char string representing a sqr on the board
+     * @return if the piece can move to (next_position) geometrically
+     */
     virtual bool canMoveGeo(std::string next_position) = 0;
 
     // returns if the piece can move to (next_position) geometrically to eat... relevant for the Pawn
@@ -27,11 +30,8 @@ public:
         return canMoveGeo(next_position);
     };
 
-    // CR: not sure if I would make a default implementation in this case
     // returns the positions on the path the piece need to take to (next_position)
-    virtual std::string getPath(std::string next_position) {
-        return "";  //the knight and king make jumps so their moves don't have paths
-    };
+    virtual std::string getPath(std::string next_position) = 0;
 
     // returns the positions a piece can move geometrically
     virtual std::string getGeoPossibleMoves() = 0;

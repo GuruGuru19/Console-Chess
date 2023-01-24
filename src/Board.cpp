@@ -54,6 +54,7 @@ Board::~Board() {
     //free(this->board);
 }
 
+//TODO: better name for threateningCheck
 bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool threateningCheck) {
     std::string fromPos = move.substr(0,2); // position of the piece
     std::string toPos = move.substr(2); // position to move the piece
@@ -76,77 +77,95 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
         return false;// trying to move an empty sqr
     }
 
-    // CR: conditioning ordering
-    // CR: encapsulation & division
-    //trying to move a king
-    if (piece->getMark() == 'K' || piece->getMark() == 'k' && considerPinned){
-        std::string kingPath = piece->getPath(toPos); // if the king has a path is a castling move
-        // trying to move a king to Threatened sqr
-        if (!sqrThreatener(toPos, !piece->isWhite(), true).empty()||
-        !sqrThreatener(kingPath, !piece->isWhite(), true).empty()){
-            return false;
-        }
-        King * king = dynamic_cast<King *>(piece);
-        int casling = king->isCastling(toPos); // what type of castling
-        // CR: not real comments
-        // CR: why not make the FEN object more robust so that you can ask him if a certain castling is allowed
-        if (casling == 1 && (!this->boardFEN->getWooCastling() || !movePathClear("h1e1"))){
-            return false;// the rook can preform this move
-        }
-        if (casling == 2 && (!this->boardFEN->getWoooCastling() || !movePathClear("a1e1"))){
-            return false;// the rook can preform this move
-        }
-        if (casling == 3 && (!this->boardFEN->getBooCastling() || !movePathClear("h8e8"))){
-            return false;// the rook can preform this move
-        }
-        if (casling == 4 && (!this->boardFEN->getBoooCastling() || !movePathClear("a8e8"))){
-            return false;// the rook can preform this move
-        }
-        // CR: don't change a given parameter inside the function
-        // a king cant be pinned
-        considerPinned = false;
+    if (!piece->canMoveGeo(toPos) && !piece->canMoveGeoToEat(toPos)){
+        return false;
     }
-    // tests if your trying to move while the king is checked
-    else if (considerPinned){
-        std::string kingPos = getKingPosition(piece->isWhite());
-        std::string kingThreatenerPos = this->sqrThreatener(kingPos, !piece->isWhite(), true);
-        // CR: why this code isn't reachable?
-        //if the king is checked and this move doesn't fix it +
-        // assumes that there is only one threatener cause else this code isn't reachable
-        if (!kingThreatenerPos.empty()){
-            // CR: condition order
-            // if the move is to eat the Threatener
-            bool flag = toPos == kingThreatenerPos;
-            Piece * kingThreatener = this->board[positionToSqr(kingThreatenerPos)];
-            std::string path = kingThreatener->getPath(kingPos);
-            // CR: didn't like the condition
-            // if the move is to block the Threatener
-            for (int i = 0; i < path.size()/2 && !flag; ++i) {
-                if (move.substr(2) == path.substr(i*2, 2)){
-                    flag = true;
-                }
-            }
-            if (!flag){
-                return false;
-            }
-        }
 
-    }
-    // CR: to complex conditioning
     Piece * pieceAtTarget = this->board[positionToSqr(toPos)];
-    if (!threateningCheck && toEat && pieceAtTarget == nullptr){// trying to eat an empty sqr
-        if ( not (toPos == this->boardFEN->getEnPassant() &&
-        (piece->getMark() == 'p' || piece->getMark() == 'P') &&
-        (this->boardFEN->isWhiteTurn() == piece->isWhite()))){// not En passant
-            // CR: what?
-            return false; // big mess
-        }
-    }
+
     if (!threateningCheck && toEat && pieceAtTarget != nullptr && (pieceAtTarget->isWhite() == piece->isWhite())){
         return false; //trying to eat the same color
     }
     if (!toEat && pieceAtTarget != nullptr){
         return false; //trying to move to an occupied sqr
+    }
+
+    // CR: conditioning ordering
+    // CR: encapsulation & division
+    if (considerPinned){
+        //trying to move a king
+        if (piece->getMark() == 'K' || piece->getMark() == 'k'){
+            std::string kingThreatener = sqrThreatener(fromPos, !piece->isWhite(), true);
+            std::string kingPath = piece->getPath(toPos); // if the king has a path is a castling move
+            // trying to move a king to Threatened sqr
+            if (!sqrThreatener(toPos, !piece->isWhite(), true).empty()||
+                !sqrThreatener(kingPath, !piece->isWhite(), true).empty()){
+                return false;
+            }
+            if (!kingThreatener.empty() && toPos != kingThreatener && movePathClear(kingThreatener+toPos, fromPos)){ // assumes that there is only one threatener
+                return false;
+            }
+
+//            Board * board_after_move = new Board(*this);
+//            if (board_after_move->move(move)){
+//                return false;
+//            }
+//            if (!board_after_move->sqrThreatener(toPos, !piece->isWhite(), true).empty()){
+//                delete board_after_move;
+//                return false;
+//            }
+//            delete board_after_move;
+
+
+            King * king = dynamic_cast<King *>(piece);
+            int casling = king->isCastling(toPos); // what type of castling
+            // CR: not real comments
+            // CR: why not make the FEN object more robust so that you can ask him if a certain castling is allowed
+            if (casling == 1 && (!this->boardFEN->canWooCastle() || !movePathClear("h1e1"))){
+                return false;// the rook can preform this move
+            }
+            if (casling == 2 && (!this->boardFEN->canWoooCastle() || !movePathClear("a1e1"))){
+                return false;// the rook can preform this move
+            }
+            if (casling == 3 && (!this->boardFEN->canBooCastle() || !movePathClear("h8e8"))){
+                return false;// the rook can preform this move
+            }
+            if (casling == 4 && (!this->boardFEN->canBoooCastle() || !movePathClear("a8e8"))){
+                return false;// the rook can preform this move
+            }
+            // CR: don't change a given parameter inside the function
+            // a king cant be pinned
+            considerPinned = false;
+        }
+            // tests if your trying to move while the king is checked
+        else {
+            std::string kingPos = getKingPosition(piece->isWhite());
+            std::string kingThreatenerPos = this->sqrThreatener(kingPos, !piece->isWhite(), true);
+            // CR: why this code isn't reachable?
+            //if the king is checked and this move doesn't fix it +
+            // assumes that there is only one threatener cause else this code isn't reachable
+            //the only way to be saved from a 2 threateners check is by moving the king and that code is above
+            if (!kingThreatenerPos.empty()){
+                Piece * kingThreatener = this->board[positionToSqr(kingThreatenerPos)];
+                std::string threatener_path = kingThreatener->getPath(kingPos);
+                bool tryingToEatThreat = toPos == kingThreatenerPos;
+                bool tryingToBlockThreat = threatener_path.find(toPos) < threatener_path.size();
+                if (not (tryingToEatThreat || tryingToBlockThreat)){
+                    return false;
+                }
+            }
+
+        }
+    }
+    // CR: to complex conditioning
+    if (!threateningCheck && toEat && pieceAtTarget == nullptr){// trying to eat an empty sqr
+        bool toPosIsEnPassantPos = toPos == this->boardFEN->getEnPassant();
+        bool pieceIsCorrectPawn = this->boardFEN->isWhiteTurn()? piece->getMark() == 'P' : piece->getMark() == 'p';
+        bool enPassant = toPosIsEnPassantPos && pieceIsCorrectPawn;
+
+        if (not enPassant){// not En passant
+            return false;
+        }
     }
 
     bool pinned = considerPinned && piecePinned(fromPos);
@@ -179,20 +198,19 @@ bool Board::piecePinned(std::string position) {
     if (not (position[0] >= 'a' && position[0] <='h' && position[1] >= '1' && position[1] <='8')){
         return false; // the position is outside the board (only gets here in tests)
     }
-    // CR: spacing
+
     Piece * piece = this->board[positionToSqr(position)];
     if (piece == nullptr){
         return false; // there is no piece at the position
     }
     std::string kingPos = getKingPosition(piece->isWhite());
-    // CR: would have writen here Piece*
-    for (auto pinner : this->board) {
+
+    for (Piece * pinner : this->board) {
         // sets every sqr in a loop as a potential pinner
         if (pinner != nullptr && (pinner->isWhite() != piece->isWhite())){ // is an enemy piece
             std::string path = pinner->getPath(kingPos); //gets the pinner path to the king
             bool flag = false;
             for (int j = 0; j < path.size()/2; ++j) {
-                // CR: can't be just ==piece?
                 if (this->board[positionToSqr(path.substr(j*2, 2))] != nullptr){ // there is a piece in its way
                     if (path.substr(j*2, 2) == position){ // it's the piece we look for
                         flag = true;
@@ -210,7 +228,7 @@ bool Board::piecePinned(std::string position) {
     return false;
 }
 
-bool Board::movePathClear(std::string move) {
+bool Board::movePathClear(std::string move, std::string ignorePos) {
     // CR: spacing
     std::string fromPos = move.substr(0,2); // position of the piece
     std::string toPos = move.substr(2); // position to move the piece
@@ -225,14 +243,15 @@ bool Board::movePathClear(std::string move) {
     // CR: don't you repeat this check few times?
     std::string path = piece->getPath(toPos);
     for (int i = 0; i < path.size()/2; ++i) {
-        if (this->board[positionToSqr(path.substr(i*2, 2))] != nullptr){
+        std::string pos = path.substr(i*2, 2);
+        if (pos != ignorePos && this->board[positionToSqr(pos)] != nullptr){
             return false;// found a piece in the way
         }
     }
     return true; // no problem
 }
 
-std::string Board::sqrThreatener(std::string position, bool threatenedByWhite, bool ignorePinned, bool moveToEat) { // always ignores pins
+std::string Board::sqrThreatener(const std::string& position, bool threatenedByWhite, bool ignorePinned, bool moveToEat) { // always ignores pins
     if (position.empty() || positionToSqr(position) < 0 || positionToSqr(position) >= 64){ // the position is invalid
         return "";
     }
@@ -290,90 +309,94 @@ bool Board::move(std::string move) {
     if (!(legal_move || legal_eat_move)){ // remember for later ! they cant both be true
         return false;
     }
-    // CR: spacing
+
     std::string fromPos = move.substr(0,2); // position of the piece
     std::string toPos = move.substr(2); // position to move the piece
     Piece * piece = this->board[positionToSqr(fromPos)]; // piece to move
 
     std::string enPassant; // reset
-    bool woo = this->boardFEN->getWooCastling();
-    bool wooo = this->boardFEN->getWoooCastling();
-    bool boo = this->boardFEN->getBooCastling();
-    bool booo = this->boardFEN->getBoooCastling();
+    bool woo = this->boardFEN->canWooCastle();
+    bool wooo = this->boardFEN->canWoooCastle();
+    bool boo = this->boardFEN->canBooCastle();
+    bool booo = this->boardFEN->canBoooCastle();
 
     // CR: switch-case
     if (piece->getMark() == 'p' || piece->getMark() == 'P'){ //if it's a pawn
         enPassant = piece->getPath(toPos);// save the path as the en passant
     }
     else if(piece->getMark() == 'K'){ // if the white king moves
-        woo = false;
-        wooo = false;
+        this->boardFEN->setWooCastling(false);
+        this->boardFEN->setWoooCastling(false);
     }
     else if(piece->getMark() == 'k'){ // if the black King moves
-        boo = false;
-        booo = false;
+        this->boardFEN->setBooCastling(false);
+        this->boardFEN->setBoooCastling(false);
     }
     else if (!woo && fromPos == "h1"){ // is the rook moves
-        woo = false;
+        this->boardFEN->setWooCastling(false);
     }
     else if (!wooo && fromPos == "a1"){
-        wooo = false;
+        this->boardFEN->setWoooCastling(false);
     }
     else if (!boo && fromPos == "h8"){
-        boo = false;
+        this->boardFEN->setBooCastling(false);
     }
     else if (!booo && fromPos == "a8"){
-        booo = false;
+        this->boardFEN->setBoooCastling(false);
     }
 
     this->board[positionToSqr(fromPos)] = nullptr; // puts a null where the piece is moved from
     if (legal_move){
-        // CR: the comments should go before the lines of action
         if (move == "e1g1"){ // if it's a white o-o castling
+            // move the rook h1f1
             Piece * rook =  this->board[positionToSqr("h1")];
-            this->board[positionToSqr("h1")] = nullptr;// move the rook h1f1
+            this->board[positionToSqr("h1")] = nullptr;
             this->board[positionToSqr("f1")] = rook;
             rook->setPosition("f1");
         }
         else if (move == "e1c1"){ // if it's a white o-o-o castling
+            // move the rook a1d1
             Piece * rook =  this->board[positionToSqr("a1")];
-            this->board[positionToSqr("a1")] = nullptr;// move the rook a1d1
+            this->board[positionToSqr("a1")] = nullptr;
             this->board[positionToSqr("d1")] = rook;
             rook->setPosition("d1");
         }
         else if (move == "e8g8"){ // if it's a black o-o castling
+            // move the rook h8f8
             Piece * rook =  this->board[positionToSqr("h8")];
-            this->board[positionToSqr("h8")] = nullptr;// move the rook h8f8
+            this->board[positionToSqr("h8")] = nullptr;
             this->board[positionToSqr("f8")] = rook;
             rook->setPosition("f8");
         }
         else if (move == "e8c8"){ // if it's a black o-o-o castling
+            // move the rook a8d8
             Piece * rook =  this->board[positionToSqr("a8")];
-            this->board[positionToSqr("a8")] = nullptr;// move the rook a8d8
+            this->board[positionToSqr("a8")] = nullptr;
             this->board[positionToSqr("d8")] = rook;
             rook->setPosition("d8");
         }
     }
     else{ // eating
-        // CR: re-arrange
+        std::string removePos;
         if (this->board[positionToSqr(toPos)] == nullptr){ //it's a legal eat so if the target sqr is empty it means it's an En Passant
             std::string targetPos = this->boardFEN->getEnPassant();
             targetPos[1] += piece->isWhite() ? -1 : 1; // the pawn position to eat
 
-            delete this->board[positionToSqr(targetPos)]; // delete the eaten pawn
-            this->board[positionToSqr(targetPos)] = nullptr; // null where it's been
+            removePos = targetPos;
         }
         else{ // not En Passant
-            delete this->board[positionToSqr(toPos)]; // delete the eaten piece
-            this->board[positionToSqr(toPos)] = nullptr;
+            removePos = toPos;
         }
+
+        delete this->board[positionToSqr(removePos)]; // delete the eaten piece
+        this->board[positionToSqr(removePos)] = nullptr;
 
     }
     this->board[positionToSqr(toPos)] = piece; // puts the piece in its target position
 
     piece->setPosition(toPos); // updates the piece's internal position
 
-    this->boardFEN->update(this->board, woo, wooo, boo, booo, enPassant, legal_eat_move); // updates the FEN's internal data
+    this->boardFEN->update(this->board, enPassant, legal_eat_move); // updates the FEN's internal data
     return true; // the move is complete
 }
 
@@ -400,9 +423,5 @@ void Board::setPiece(Piece * new_piece) {
     delete this->board[sqr]; // delete what ever was in the sqr before (usually a pawn)
     this->board[sqr] = new_piece; // sets the new piece in the board
     this->boardFEN->update(this->board,
-                           this->boardFEN->getWooCastling(),
-                           this->boardFEN->getWoooCastling(),
-                           this->boardFEN->getBooCastling(),
-                           this->boardFEN->getBoooCastling(),
                            "", false, true); // updates the FEN
 }
