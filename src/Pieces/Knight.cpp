@@ -5,7 +5,7 @@
 #include "../../include/Pieces/Knight.h"
 
 Knight::Knight(std::string start, bool white) : Piece(start, white) {
-    this->mark = white?'N':'n';
+    this->mark = white? 'N' : 'n';
 }
 
 bool Knight::canMoveGeo(std::string next_position) {
@@ -16,6 +16,7 @@ bool Knight::canMoveGeo(std::string next_position) {
 }
 
 std::string Knight::getGeoPossibleMoves() {
+    // CR: why like this?
     std::string positions = "1122334455667788";
     positions[0] = (char)(this->position[0]+1);
     positions[1] = (char)(this->position[1]+2);

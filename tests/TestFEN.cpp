@@ -2,6 +2,7 @@
 #include "../include/FEN.h"
 #include "../include/Board.h"
 
+// CR: missing tests for update_fen & fen from other fen
 TEST(Test_FEN, correctBuildFEN1Test){
     std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     FEN * fen = new FEN(fen_string);

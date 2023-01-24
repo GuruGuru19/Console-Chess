@@ -6,6 +6,9 @@
 #include <iostream>
 #include "../include/Screen.h"
 
+// CR: it seems you don't use the COLOR_CLEAR var anywhere
+// CR: the convention is to initialize the consts in the header file
+// CR: why not make the colors the full code?
 const std::string Screen::COLOR_CLEAR = "0";
 const std::string Screen::WHITE_TEXT = "97";
 const std::string Screen::BLACK_TEXT = "30";
@@ -17,6 +20,7 @@ const std::string Screen::DARK_BACK = GREEN_BACK;
 const std::string Screen::LIGHT_BACK = BLUE_BACK;
 
 
+// CR: spacing
 std::string Screen::buildBoardString(FEN & fen) {
     std::string str = "";
     std::string positions = fen.getPositions();
@@ -25,11 +29,13 @@ std::string Screen::buildBoardString(FEN & fen) {
     for (int x = 8; x >= 1; --x) {
         str.append(std::to_string(x) + " ");
         for (char y = 'A'; y <= 'H'; ++y) {
+            // CR: complex command
             str.append(pieceCode(positions[sqr + (-x+8)], sqr%2==1));
             sqr++;
         }
         str.append(" " + std::to_string(x));
         str.append("\n");
+        // CR: why?
         sqr--;
     }
     str.append("   A  B  C  D  E  F  G  H");
@@ -38,6 +44,7 @@ std::string Screen::buildBoardString(FEN & fen) {
 
 std::string Screen::pieceCode(char c, bool dark) {
     std::string piece;
+    // CR: switch-case
     if (c == 'p' || c == 'P'){
         piece = "\u265F";
     }
@@ -68,15 +75,17 @@ std::string Screen::pieceCode(char c, bool dark) {
 }
 
 std::string Screen::printMoveDialog(FEN & fen, bool check) {
-    std::string turn = fen.isWhiteTurn()?"White":"Black";
+    std::string turn = fen.isWhiteTurn()? "White" : "Black";
     std::string msg = "=================================\n";
     msg.append(buildBoardString(fen)+ "\n");
     if (check){
+        // CR: maybe add a warning theme
         msg.append("\33["+WHITE_TEXT+";"+RED_BACK+"m"+turn+" is checked!!!\33[0m\n");
     }
     msg.append("its " + turn + "'s turn\n");
 
-    msg += fen.isWhiteTurn()?'w':'b';
+    // CR: why not use the names you got at the start?
+    msg += fen.isWhiteTurn()? 'w' : 'b';
     msg.append(" move: ");
     std::cout << msg;
     std::string move;
@@ -85,16 +94,18 @@ std::string Screen::printMoveDialog(FEN & fen, bool check) {
 }
 
 char Screen::printCrowningDialog(bool white) {
+    // CR: you don't use this var anywhere
     char mark;
     while (true){
         std::string msg = "=================================\n";
         msg.append("1-Bishop, 2-Knight, 3-Rook, 4-Queen\n");
-        msg.append("Crown your Pawn:");
+        msg.append("Crown your Pawn: ");
         std::cout << msg;
 
         std::string piece_code;
         std::cin >> piece_code;
 
+        // CR: switch-case
         if (piece_code == "1"){
             return white?'B':'b';
         }

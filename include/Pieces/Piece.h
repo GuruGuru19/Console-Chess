@@ -8,12 +8,14 @@
 
 #include <string>
 
+// CR: this class should appear outside the pieces directory
 class Piece {
 protected:
     char mark;
     std::string position;
     bool white;
 public:
+    // CR: docs
     // constructor
     Piece(std::string start, bool white);
 
@@ -25,9 +27,10 @@ public:
         return canMoveGeo(next_position);
     };
 
+    // CR: not sure if I would make a default implementation in this case
     // returns the positions on the path the piece need to take to (next_position)
     virtual std::string getPath(std::string next_position) {
-        return "";//the knight and king make jumps so their moves don't have paths
+        return "";  //the knight and king make jumps so their moves don't have paths
     };
 
     // returns the positions a piece can move geometrically

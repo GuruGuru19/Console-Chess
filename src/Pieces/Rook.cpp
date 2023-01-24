@@ -5,13 +5,14 @@
 #include "../../include/Pieces/Rook.h"
 
 Rook::Rook(std::string start, bool white) : Piece(start, white) {
-    this->mark = white?'R':'r';
+    this->mark = white? 'R' : 'r';
 }
 
 bool Rook::canMoveGeo(std::string next_position) {
     int x_move_size = abs(this->position[0] - next_position[0]);
     int y_move_size = abs(this->position[1] - next_position[1]);
 
+    // CR: could be shortened.
     return (x_move_size > 0 && y_move_size == 0) || (x_move_size == 0 && y_move_size > 0);
 }
 

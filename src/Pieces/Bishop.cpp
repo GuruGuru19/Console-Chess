@@ -5,7 +5,7 @@
 #include "../../include/Pieces/Bishop.h"
 
 Bishop::Bishop(std::string start, bool white) : Piece(start, white) {
-    this->mark = white?'B':'b';
+    this->mark = white? 'B' : 'b';
 }
 
 bool Bishop::canMoveGeo(std::string next_position) {
@@ -19,6 +19,7 @@ std::string Bishop::getPath(std::string next_position) {
     if (!canMoveGeo(next_position)){
         return "";
     }
+    // CR: spacing
     std::string moves;
 
     int x_move = next_position[0] - this->position[0];
@@ -27,9 +28,11 @@ std::string Bishop::getPath(std::string next_position) {
     int x_dir = x_move/abs(x_move);
     int y_dir = y_move/abs(y_move);
 
+    // CR: why the ++n?
     for (int n = 1; n < abs(x_move); ++n) {
         char x = (char)(this->position[0] + n * x_dir);
         char y = (char)(this->position[1] + n * y_dir);
+        // CR: multiple actions in one line
         std::string newPos; newPos+=x; newPos+=y;
         moves.append(newPos);
     }
@@ -38,6 +41,7 @@ std::string Bishop::getPath(std::string next_position) {
 }
 
 std::string Bishop::getGeoPossibleMoves() {
+    // CR: didn't like that, let's think about other solutions.
     std::string diagonal_1_start = this->position;
     std::string diagonal_2_start = this->position;
     while (diagonal_1_start[0] > 'a' && diagonal_1_start[1] > '1'){ // takes the position as back and down as it can

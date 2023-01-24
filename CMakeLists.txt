@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.20)
 project(itai_chess)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -61,10 +61,11 @@ target_link_libraries(
         itai_chess_tests
         GTest::gtest_main
 )
-target_link_libraries(
-        itai_chess
-        GTest::gtest_main
-)
+# CR: you don't need to link itai_chess to gtest. This can cause problems in build&run.
+#target_link_libraries(
+#        itai_chess
+#        GTest::gtest_main
+#)
 include(GoogleTest)
 gtest_discover_tests(itai_chess_tests)
 #testing

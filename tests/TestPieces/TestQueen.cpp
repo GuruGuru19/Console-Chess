@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../../include/Pieces/Queen.h"
 
+// CR: didn't test all queen functionality
 TEST(QueenTest, makePathTest){
     Queen * queen = new Queen("e5", true);
     EXPECT_STREQ(queen->getPath("e8").c_str(), "e6e7");

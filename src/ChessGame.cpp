@@ -36,6 +36,7 @@ void ChessGame::gameStart() {
 }
 
 bool ChessGame::gameLoop() {
+    // CR: sectioning and commenting
     bool white_turn = this->board->isWhiteTurn();
     FEN * fen = this->board->getFEN();
     std::string kingPos = this->board->getKingPosition(white_turn);
@@ -43,12 +44,14 @@ bool ChessGame::gameLoop() {
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
     bool king_checked = !kingThreateners.empty();
+    // CR: why do I need this(king_checked) check? it already happens inside the other checks
     if ((king_checked && kingMate()) || staleMate()){ // if the game needs to end
         std::cout << Screen::buildBoardString(*fen) << std::endl;
         return false;
     }
 
     std::string move;
+    // CR: change the true & break
     while (true){  // until the move is legal
         move = Screen::printMoveDialog(*fen, king_checked);
         if (this->board->legalMove(move) || this->board->legalEatMove(move)){
@@ -61,6 +64,7 @@ bool ChessGame::gameLoop() {
     this->board->move(move); // make the move
 
     std::string crowning_pos = Crowning();
+    // CR: encapsulate
     if (!crowning_pos.empty()){ // the move result in a crowning
         char new_mark = Screen::printCrowningDialog(white_turn); // gets the new piece mark
         Piece * piece;
@@ -89,6 +93,7 @@ bool ChessGame::gameLoop() {
     return true;
 }
 
+// CR: ordering
 void ChessGame::gameEnd() {
     bool white_turn = board->isWhiteTurn();
     // print the game result
@@ -98,17 +103,21 @@ void ChessGame::gameEnd() {
     }
     else if (staleMate()){
         std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"mStale mate!\33[0m\n";
-        std::cout << msg << "Draw";
+        std::cout << msg << "Draw!";
     }
+    // CR: why the else without anything?
     else{
 
     }
 }
 
+// CR: would have gotten the white_turn
+// CR: not good naming
 std::string ChessGame::Crowning() {
     // this code is run after the move
     bool white_turn = !this->board->isWhiteTurn();
 
+    // CR: could be shortened
     if (white_turn){
         for (int i = 0; i < 8; ++i) { // search for a pawn on the '8' line
             std::string pos = Board::sqrToPosition(i);
@@ -130,12 +139,14 @@ std::string ChessGame::Crowning() {
     return "";
 }
 
+// CR: why not get the kingThreaterners from calling function?
 bool ChessGame::kingMate() {
     bool white_turn = this->board->isWhiteTurn();
     std::string kingPos = this->board->getKingPosition(white_turn); // king's position
 
     // position of a piece that is threatening the king
     std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn, true);
+    // CR: garbage condition
     if (!kingThreateners.empty()){ // the (active_color)'s king is checked
         if (!this->board->getLegalMoves(kingPos).empty()){
             return false; //if the king can run away
@@ -143,6 +154,7 @@ bool ChessGame::kingMate() {
             return true;
         }
 
+        // CR: change logic
         bool canEatThreatener = this->board->sqrThreatener(kingThreateners, !white_turn, true).empty() &&
                 board->legalEatMove(kingPos+kingThreateners);
         if (canEatThreatener){ // if someone can eat the threatener

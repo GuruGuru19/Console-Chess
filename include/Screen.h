@@ -10,6 +10,7 @@
 #include "FEN.h"
 
 class Screen {
+// CR: why did you leave the private section in here?
 private:
 
 public:
@@ -23,6 +24,7 @@ public:
     static const std::string DARK_BACK;
     static const std::string LIGHT_BACK;
 
+    // CR: docs
     /**
     * @param fen
     * @return a string representing the board print

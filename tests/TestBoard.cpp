@@ -2,6 +2,7 @@
 #include "../include/Board.h"
 #include "Prefixes/BoardPrefix.h"
 
+// CR: missing setPiece test
 TEST(BoardTest, BuildBoard1){
     std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     FEN * fen = new FEN(fen_string);
@@ -9,6 +10,7 @@ TEST(BoardTest, BuildBoard1){
     delete board; delete fen;
 }
 
+// CR: let's talk about test arrangement & naming
 TEST_F(BoardPrefix, legalMove1Test){
     EXPECT_TRUE(board1->legalMove("e2e4"));
     EXPECT_TRUE(board1->legalMove("f2f4"));

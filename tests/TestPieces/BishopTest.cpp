@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "../../include/Pieces/Bishop.h"
 
+// CR: missing tests for pawn, knight, king, and piece
+// CR: didn't test all bishop functionality
 TEST(BishopTest, makePathTest){
     Bishop * bishop = new Bishop("e5", true);
     EXPECT_STREQ(bishop->getPath("e8").c_str(), "");// invalid geometrically

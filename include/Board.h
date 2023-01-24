@@ -15,6 +15,7 @@ private:
     // board current FEN
     FEN * boardFEN;
     // array of piece pointers representing the board
+    // CR: why is this comment here
 //    Piece ** board;
     Piece *board [64];
 
@@ -24,6 +25,7 @@ public:
     //destructor
     ~Board();
 
+    // CR: not good naming in "considerPinned"
     /**
     * @param move a 4 char string (2 positions) that represent a move on the board
     * @param considerPinned (default = true) is the calculation needs to consider is the piece is pinned -
@@ -56,6 +58,7 @@ public:
     */
     bool piecePinned(std::string position);
 
+    // CR: didn't mention the move has to be in the bounds of the board
     /**
     * @param move a 4 char string (2 positions) that represent a move on the board
     * @return is the move path is clear of pieces

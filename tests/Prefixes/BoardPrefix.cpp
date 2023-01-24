@@ -4,6 +4,20 @@
 
 #include "BoardPrefix.h"
 
+// CR: would have added a visual print of the board such as this, for each case
+/**
+ *    A  B  C  D  E  F  G  H
+8  ♜  ♞  ♝     ♚  ♝  ♞  ♜  8
+7  ♟  ♟  ♟  ♟  ♟  ♟  ♟  ♟  7
+6                          6
+5                          5
+4        ♝  ♛  ♝           4
+3                          3
+2  ♟  ♟  ♟  ♟  ♟  ♟  ♟  ♟  2
+1     ♛           ♚  ♞  ♜  1
+   A  B  C  D  E  F  G  H
+
+ */
 void BoardPrefix::SetUp() {
     std::string fen_string1 = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     FEN * fen1 = new FEN(fen_string1);

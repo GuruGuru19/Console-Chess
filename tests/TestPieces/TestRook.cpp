@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../../include/Pieces/Rook.h"
 
+// CR: didn't test all rook functionality
 TEST(RookTest, makePathTest){
     Rook * rook = new Rook("e5", true);
     EXPECT_STREQ(rook->getPath("e8").c_str(), "e6e7");

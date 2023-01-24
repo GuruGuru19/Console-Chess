@@ -7,7 +7,7 @@
 #include "../../include/Pieces/Rook.h"
 
 Queen::Queen(std::string start, bool white) : Piece(start, white) {
-    this->mark = white?'Q':'q';
+    this->mark = white? 'Q' : 'q';
 }
 
 bool Queen::canMoveGeo(std::string next_position) {
@@ -50,6 +50,7 @@ std::string Queen::getPath(std::string next_position) {
 }
 
 std::string Queen::getGeoPossibleMoves() {
+    // CR: this is not optimal in my opinion
     Bishop * bishop = new Bishop(this->position, true);
     Rook * rook = new Rook(this->position, true);
     std::string positions;

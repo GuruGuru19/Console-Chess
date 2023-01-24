@@ -11,6 +11,7 @@
 
 class FEN {
 private:
+    // CR: explanation
     //all the positions in a 64 long string, ' ' is an empty sqr and every other piece is represented by its mark
     std::string positions;
 
@@ -27,8 +28,10 @@ private:
     int halfmoveClock;
     int fullmoveNumber;
 public:
+    // CR: better to receive a const string.
     //constructor
     FEN(std::string str);
+    // CR: how is this a destructor?
     //destructor
     FEN(FEN & other);
 
@@ -38,6 +41,7 @@ public:
     bool isWhiteTurn() const{
         return this->whiteTurn;
     };
+    // CR: naming
     bool getWooCastling() const{
         return this->white_oo_castling;
     }
@@ -61,6 +65,7 @@ public:
     }
 
 
+    // CR: you sure you want each time to update all the elements in the fen and not create a setter for each?
     /**
     * updates the FEN
      * @param board array of piece pointers representing the board

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../include/ChessGame.h"
 
+// CR: missing tests of chase game
 TEST(ChessGameTest, kingMate1Test){
     std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     ChessGame * chessGame = new ChessGame(fen_string);

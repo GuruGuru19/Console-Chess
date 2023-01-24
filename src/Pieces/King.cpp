@@ -5,10 +5,11 @@
 #include "../../include/Pieces/King.h"
 
 King::King(std::string start, bool white) : Piece(start, white) {
-    this->mark = white?'K':'k';
+    this->mark = white? 'K' : 'k';
 }
 
 bool King::canMoveGeo(std::string next_position) {
+    // CR: explain
     if (isWhite() && this->position == "e1" && (next_position == "g1" || next_position == "c1")){
         return true;
     } else if (!isWhite() && this->position == "e8" && (next_position == "g8" || next_position == "c8")){
@@ -18,6 +19,7 @@ bool King::canMoveGeo(std::string next_position) {
     int x_move_size = abs(this->position[0] - next_position[0]);
     int y_move_size = abs(this->position[1] - next_position[1]);
 
+    // CR: long condition
     return x_move_size < 2 && y_move_size < 2 && !(x_move_size == 0 && y_move_size == 0);
 }
 
@@ -38,6 +40,7 @@ std::string King::getPath(std::string next_position) {
             return "d8";
         }
     }
+    // CR: should be else in my opinion
     return "";
 }
 
@@ -64,6 +67,7 @@ std::string King::getGeoPossibleMoves() {
 }
 
 int King::isCastling(std::string next_position) {
+    // CR: change structure of the conditions
     if (isWhite() && this->position == "e1" && next_position == "g1"){
         return 1;//w o-o
     }

@@ -5,9 +5,10 @@
 #include "../../include/Pieces/Pawn.h"
 
 Pawn::Pawn(std::string start, bool white) : Piece(start, white) {
-    this->mark = white?'P':'p';
+    this->mark = white? 'P' : 'p';
 }
 
+// CR: long conditions
 bool Pawn::canMoveGeo(std::string next_position) {
     if (isWhite()){
         bool w_option1 = this->position[1] == '2' && next_position[0] == this->position[0] && next_position[1] == '4'; // two steps
@@ -47,6 +48,7 @@ std::string Pawn::getPath(std::string next_position) {
 
 std::string Pawn::getGeoPossibleMoves() {
     if (isWhite()){
+        // CR: too long
         std::string positions = "11223344";
         // one step
         positions[0] = this->position[0];
