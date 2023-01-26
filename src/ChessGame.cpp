@@ -36,7 +36,6 @@ void ChessGame::gameStart() {
 }
 
 bool ChessGame::gameLoop() {
-    // CR: sectioning and commenting
     bool white_turn = this->board->isWhiteTurn();
     FEN * fen = this->board->getFEN();
     std::string kingPos = this->board->getKingPosition(white_turn);
@@ -48,53 +47,52 @@ bool ChessGame::gameLoop() {
     }
 
     std::string move;
-    // CR: change the true & break
     while (true){  // until the move is legal
         // position of a piece that is threatening the king
         std::string kingThreateners = this->board->sqrThreatener(kingPos, !white_turn);
         bool king_checked = !kingThreateners.empty();
-        move = Screen::printMoveDialog(*fen, king_checked);
+        move = Screen::printMoveDialog(*fen, king_checked, this->whiteName, this->blackName);
         if (this->board->legalMove(move) || this->board->legalEatMove(move)){
             break;
         }
         std::cout << "=================================" << std::endl;
-        // CR: should print white on red
-        std::cout << "Illegal move! try again" << std::endl;
+        std::cout << Screen::warningMsg("Illegal move! try again") << std::endl;
     }
 
     this->board->move(move); // make the move
 
-    std::string crowning_pos = Crowning();
-    // CR: encapsulate
+    std::string crowning_pos = pawnNeedCrowning();
+
     if (!crowning_pos.empty()){ // the move result in a crowning
+        std::cout << Screen::buildBoardString(*fen) << std::endl;
+
         char new_mark = Screen::printCrowningDialog(white_turn); // gets the new piece mark
+
         Piece * piece;
-        // puts it on the board
-        if (new_mark == 'r' || new_mark == 'R'){
-            piece = new Rook(crowning_pos, new_mark == 'R');
-            this->board->setPiece(piece);
-        }
-        else if (new_mark == 'n' || new_mark == 'N'){
-            piece = new Knight(crowning_pos, new_mark == 'N');
-            this->board->setPiece(piece);
-        }
-        else if (new_mark == 'b' || new_mark == 'B'){
-            piece = new Bishop(crowning_pos, new_mark == 'B');
-            this->board->setPiece(piece);
-        }
-        else if (new_mark == 'q' || new_mark == 'Q'){
-            piece = new Queen(crowning_pos, new_mark == 'Q');
-            this->board->setPiece(piece);
-        }
-        else{
-            std::cout << "\nERROR\n\n"; // isn't supposed to get here
+        switch (toupper(new_mark)) { // puts the piece on the board
+            case 'R':
+                piece = new Rook(crowning_pos, new_mark == 'R');
+                this->board->setPiece(piece);
+                break;
+            case 'N':
+                piece = new Knight(crowning_pos, new_mark == 'N');
+                this->board->setPiece(piece);
+                break;
+            case 'B':
+                piece = new Bishop(crowning_pos, new_mark == 'B');
+                this->board->setPiece(piece);
+                break;
+            case 'Q':
+                piece = new Queen(crowning_pos, new_mark == 'Q');
+                this->board->setPiece(piece);
+                break;
+
         }
     }
 
     return true;
 }
 
-// CR: ordering
 void ChessGame::gameEnd() {
     bool white_turn = board->isWhiteTurn();
     // print the game result
@@ -106,15 +104,12 @@ void ChessGame::gameEnd() {
         std::string msg = "\33["+Screen::WHITE_TEXT+";"+Screen::RED_BACK+"mStale mate!\33[0m\n";
         std::cout << msg << "Draw!";
     }
-    // CR: why the else without anything?
     else{
-
+        std::cout << Screen::warningMsg("how did you get here?") << std::endl;
     }
 }
 
-// CR: would have gotten the white_turn
-// CR: not good naming
-std::string ChessGame::Crowning() {
+std::string ChessGame::pawnNeedCrowning() {
     // this code is run after the move
     bool white_turn = !this->board->isWhiteTurn();
 

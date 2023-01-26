@@ -14,7 +14,6 @@ protected:
     std::string position;
     bool white;
 public:
-    // CR: docs
     // constructor
     Piece(std::string start, bool white);
 
@@ -26,7 +25,7 @@ public:
     virtual bool canMoveGeo(std::string next_position) = 0;
 
     // returns if the piece can move to (next_position) geometrically to eat... relevant for the Pawn
-    virtual bool canMoveGeoToEat(std::string & next_position) {
+    virtual bool canMoveGeoToEat(std::string next_position) {
         return canMoveGeo(next_position);
     };
 

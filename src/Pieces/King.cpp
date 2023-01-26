@@ -9,7 +9,7 @@ King::King(std::string start, bool white) : Piece(start, white) {
 }
 
 bool King::canMoveGeo(std::string next_position) {
-    // CR: explain
+    // represent the situations when the king is castling
     if (isWhite() && this->position == "e1" && (next_position == "g1" || next_position == "c1")){
         return true;
     } else if (!isWhite() && this->position == "e8" && (next_position == "g8" || next_position == "c8")){

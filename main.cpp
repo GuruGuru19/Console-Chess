@@ -1,8 +1,10 @@
 #include <string>
 #include "include/ChessGame.h"
 
+#define BOARD_FEN ("r1b3nr/pppk2qp/1bnp4/4p1BQ/2BPP3/2P5/PP3PPP/RN3RK1 w - - 1 12")
+
 int main() {
-    std::string starting_fen = "rnb2bnr/ppppk2p/8/1BN2pP1/4B3/1Q6/PPPPPP1P/Rq2K1NR w KQ - 0 1";
+    std::string starting_fen = BOARD_FEN;
     ChessGame * game = new ChessGame(starting_fen);
     game->runGame();
 }

@@ -15,8 +15,6 @@ private:
     // board current FEN
     FEN * boardFEN;
     // array of piece pointers representing the board
-    // CR: why is this comment here
-//    Piece ** board;
     Piece *board [64];
 
 public:
@@ -25,19 +23,18 @@ public:
     //destructor
     ~Board();
 
-    // CR: not good naming in "considerPinned"
     /**
     * @param move a 4 char string (2 positions) that represent a move on the board
-    * @param considerPinned (default = true) is the calculation needs to consider is the piece is pinned -
+    * @param pinnedPieceCantMove (default = true) is the calculation needs to consider is the piece is pinned -
      * relevant when we check if a piece can eat the King
     * @param toEat (default = false) the move aims to eat another piece
     * @param threateningCheck (default = false) when you check if a piece can eat an empty sqr -
      * relevant when we check if a king can move to a sqr
     * @return is the move is legal
     */
-    bool legalMove(std::string move, bool considerPinned = true, bool toEat = false, bool threateningCheck = false);
-    bool legalEatMove(std::string move, bool considerPinned = true,  bool threateningCheck = false){
-        return legalMove(move, considerPinned, true, threateningCheck);
+    bool legalMove(const std::string& move, bool pinnedPieceCantMove = true, bool toEat = false, bool threateningCheck = false);
+    bool legalEatMove(std::string move, bool pinnedPieceCantMove = true,  bool threateningCheck = false){
+        return legalMove(move, pinnedPieceCantMove, true, threateningCheck);
     };
 
     /**
@@ -56,15 +53,15 @@ public:
     * @param position position on the board
     * @return is the piece on (position) pinned
     */
-    bool piecePinned(std::string position);
+    bool piecePinned(const std::string& position);
 
-    // CR: didn't mention the move has to be in the bounds of the board
     /**
     * @param move a 4 char string (2 positions) that represent a move on the board
+     * - **assumes the move is on the board**
     * @param ignorePos (default = "") a position to ignore on the way
     * @return is the move path is clear of pieces
     */
-    bool movePathClear(std::string move, std::string ignorePos = "");
+    bool movePathClear(const std::string& move, const std::string& ignorePos = "");
 
     /**
     * @param position position on the board
@@ -99,13 +96,13 @@ public:
     * @param move a 4 char string (2 positions) that represent a move on the board
     * @return if the move was made
     */
-    bool move(std::string move);
+    bool move(const std::string& move);
 
     /**
     * @param position position on the board
     * @return all the legal positions the piece at (position) can go to legally
     */
-    std::string getLegalMoves(std::string position);
+    std::string getLegalMoves(const std::string& position);
 
     /**
      * puts a new piece on the board -
@@ -120,6 +117,13 @@ public:
 
     FEN * getFEN(){
         return this->boardFEN;
+    }
+
+    /**
+    * @param pos a 2 char long string representing a position
+    */
+    static bool isPositionOnBoard(const std::string& pos){
+        return pos[0] >= 'a' && pos[0] <='h' && pos[1] >= '1' && pos[1] <='8';
     }
 };
 

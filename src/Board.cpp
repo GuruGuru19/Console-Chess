@@ -2,7 +2,6 @@
 // Created by itai on 1/3/23.
 //
 
-#include <iostream>
 #include "../include/Board.h"
 #include "../include/Pieces/Pawn.h"
 #include "../include/Pieces/Rook.h"
@@ -14,33 +13,31 @@
 
 Board::Board(FEN &fen) {
     this->boardFEN = new FEN(fen);
-    // CR: don't leave un-relevant comments in your code.
-    //this->board = (Piece **)malloc(sizeof(Piece *) * 64);
     int i = 0;
     for (char c: this->boardFEN->getPositions()) { // for every char in the FEN's positions make a new Piece
-        // CR: switch-case
-        // CR: why not do the conversion to position on start?
-        // CR: why not check is the character upper before? you could also make the char into a lower and cut in half
-        // the conditions
-        if (c == 'p' || c == 'P'){
-            board[i] = new Pawn(sqrToPosition(i), c == 'P');
-        }
-        else if (c == 'r' || c == 'R'){
-            board[i] = new Rook(sqrToPosition(i), c == 'R');
-        }
-        else if (c == 'n' || c == 'N'){
-            board[i] = new Knight(sqrToPosition(i), c == 'N');
-        }
-        else if (c == 'b' || c == 'B'){
-            board[i] = new Bishop(sqrToPosition(i), c == 'B');
-        }
-        else if (c == 'q' || c == 'Q'){
-            board[i] = new Queen(sqrToPosition(i), c == 'Q');
-        }
-        else if (c == 'k' || c == 'K'){
-            board[i] = new King(sqrToPosition(i), c == 'K');
-        } else{
+        if (c == ' '){
             board[i] = nullptr;
+        }
+        std::string pos = sqrToPosition(i);
+        switch (toupper(c)) {
+            case 'P':
+                board[i] = new Pawn(pos, c == 'P');
+                break;
+            case 'R':
+                board[i] = new Rook(pos, c == 'R');
+                break;
+            case 'N':
+                board[i] = new Knight(pos, c == 'N');
+                break;
+            case 'B':
+                board[i] = new Bishop(pos, c == 'B');
+                break;
+            case 'Q':
+                board[i] = new Queen(pos, c == 'Q');
+                break;
+            case 'K':
+                board[i] = new King(pos, c == 'K');
+                break;
         }
         i++;
     }
@@ -48,29 +45,25 @@ Board::Board(FEN &fen) {
 
 Board::~Board() {
     delete this->boardFEN; // deletes the fen
-    for (int i = 0; i < 64; ++i) { // deletes the pieces
-        delete this->board[i];
+    for (auto & i : this->board) { // deletes the pieces
+        delete i;
     }
     //free(this->board);
 }
 
 //TODO: better name for threateningCheck
-bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool threateningCheck) {
+bool Board::legalMove(const std::string & move, bool pinnedPieceCantMove, bool toEat, bool threateningCheck) {
     std::string fromPos = move.substr(0,2); // position of the piece
     std::string toPos = move.substr(2); // position to move the piece
 
-    // CR: long condition
-    // CR: comments of conditions should go the same line as the condition or one line before
-    if (not (fromPos[0] >= 'a' && fromPos[0] <='h' && fromPos[1] >= '1' && fromPos[1] <='8'&&
-            toPos[0] >= 'a' && toPos[0] <='h' && toPos[1] >= '1' && toPos[1] <='8')){
-        return false;// the move is outside the board
+    if (!isPositionOnBoard(fromPos) || !isPositionOnBoard(toPos)){ // the move is outside the board
+        return false;
     }
 
-    if (fromPos == toPos){
-        return false; // trying to move to the same place
+    if (fromPos == toPos){ // trying to move to the same place
+        return false;
     }
 
-    // CR: would have split
     Piece * piece = this->board[positionToSqr(fromPos)];
 
     if (piece == nullptr){
@@ -90,9 +83,7 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
         return false; //trying to move to an occupied sqr
     }
 
-    // CR: conditioning ordering
-    // CR: encapsulation & division
-    if (considerPinned){
+    if (pinnedPieceCantMove){
         //trying to move a king
         if (piece->getMark() == 'K' || piece->getMark() == 'k'){
             std::string kingThreatener = sqrThreatener(fromPos, !piece->isWhite(), true);
@@ -106,21 +97,8 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
                 return false;
             }
 
-//            Board * board_after_move = new Board(*this);
-//            if (board_after_move->move(move)){
-//                return false;
-//            }
-//            if (!board_after_move->sqrThreatener(toPos, !piece->isWhite(), true).empty()){
-//                delete board_after_move;
-//                return false;
-//            }
-//            delete board_after_move;
-
-
             King * king = dynamic_cast<King *>(piece);
-            int casling = king->isCastling(toPos); // what type of castling
-            // CR: not real comments
-            // CR: why not make the FEN object more robust so that you can ask him if a certain castling is allowed
+            int casling = king->isCastling(toPos); // return what type of castling we are trying to do 1=woo, 2=wooo, 3=boo, 4=booo, 0= not a castling
             if (casling == 1 && (!this->boardFEN->canWooCastle() || !movePathClear("h1e1"))){
                 return false;// the rook can preform this move
             }
@@ -133,15 +111,11 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
             if (casling == 4 && (!this->boardFEN->canBoooCastle() || !movePathClear("a8e8"))){
                 return false;// the rook can preform this move
             }
-            // CR: don't change a given parameter inside the function
-            // a king cant be pinned
-            considerPinned = false;
         }
             // tests if your trying to move while the king is checked
         else {
             std::string kingPos = getKingPosition(piece->isWhite());
             std::string kingThreatenerPos = this->sqrThreatener(kingPos, !piece->isWhite(), true);
-            // CR: why this code isn't reachable?
             //if the king is checked and this move doesn't fix it +
             // assumes that there is only one threatener cause else this code isn't reachable
             //the only way to be saved from a 2 threateners check is by moving the king and that code is above
@@ -157,18 +131,18 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
 
         }
     }
-    // CR: to complex conditioning
     if (!threateningCheck && toEat && pieceAtTarget == nullptr){// trying to eat an empty sqr
+
         bool toPosIsEnPassantPos = toPos == this->boardFEN->getEnPassant();
         bool pieceIsCorrectPawn = this->boardFEN->isWhiteTurn()? piece->getMark() == 'P' : piece->getMark() == 'p';
         bool enPassant = toPosIsEnPassantPos && pieceIsCorrectPawn;
 
-        if (not enPassant){// not En passant
+        if (not enPassant){// trying to eat an empty sqr & not En passant!
             return false;
         }
     }
 
-    bool pinned = considerPinned && piecePinned(fromPos);
+    bool pinned = pinnedPieceCantMove && toupper(piece->getMark()) != 'K' && piecePinned(fromPos);// a king cant be pinned
     bool geometrically_legal = toEat ? piece->canMoveGeoToEat(toPos) : piece->canMoveGeo(toPos);
     bool move_path_clear = movePathClear(move);
     return !pinned && geometrically_legal && move_path_clear;
@@ -176,15 +150,14 @@ bool Board::legalMove(std::string move, bool considerPinned, bool toEat, bool th
 
 // CR: ordering
 Piece * Board::getPiece(std::string & position) {
-    // CR: garbage condition
-    if (position[0] >= 'a' && position[0] <='h' && position[1] >= '1' && position[1] <='8'){
-        return this->board[positionToSqr(position)];// the position is inside the board
+    if (!isPositionOnBoard(position)){ // the position is outside the board
+        return nullptr;
     }
-    return nullptr; // the position is outside the board
+    return this->board[positionToSqr(position)]; // the position is inside the board
 }
 
 std::string Board::getKingPosition(bool white) {
-    char target = white? 'K' : 'k'; // what would the king's mark be
+    char target = white ? 'K' : 'k'; // what would the king's mark be
     for (int i = 0; i < 64; ++i) {
         if (this->board[i] != nullptr && this->board[i]->getMark() == target){ // checks every sqr for the king
             return sqrToPosition(i);
@@ -193,9 +166,8 @@ std::string Board::getKingPosition(bool white) {
     return "";
 }
 
-bool Board::piecePinned(std::string position) {
-    // CR: could be erased if in docs explanation you say you assume the correctness of the input
-    if (not (position[0] >= 'a' && position[0] <='h' && position[1] >= '1' && position[1] <='8')){
+bool Board::piecePinned(const std::string & position) {
+    if (not isPositionOnBoard(position)){
         return false; // the position is outside the board (only gets here in tests)
     }
 
@@ -228,15 +200,15 @@ bool Board::piecePinned(std::string position) {
     return false;
 }
 
-bool Board::movePathClear(std::string move, std::string ignorePos) {
-    // CR: spacing
+bool Board::movePathClear(const std::string & move, const std::string & ignorePos) {
     std::string fromPos = move.substr(0,2); // position of the piece
     std::string toPos = move.substr(2); // position to move the piece
+
     Piece * piece = this->board[positionToSqr(fromPos)];
     if (piece == nullptr){
         return false;// trying to move an empty sqr
     }
-    // CR: why the comment?
+
     if (!piece->canMoveGeo(toPos) && !piece->canMoveGeoToEat(toPos)){ // doesn't check the eatGeo cause its only relevant to the pawn
         return false;// the piece can't move that way geometrically
     }
@@ -258,9 +230,9 @@ std::string Board::sqrThreatener(const std::string& position, bool threatenedByW
     std::string threateners; // empty string
     for (int i = 0; i < 64; ++i) {
         Piece * p = this->board[i]; // every piece as a potential threatener
-        // CR: long condition
-        if (p != nullptr && (p->isWhite() == threatenedByWhite) && // correct color
-        legalMove(sqrToPosition(i)+position,!ignorePinned, moveToEat, true)){ // & the move is legal
+
+        bool correct_color_piece = p != nullptr && p->isWhite() == threatenedByWhite;
+        if (correct_color_piece && legalMove(sqrToPosition(i)+position,!ignorePinned, moveToEat, true)){ // & the move is legal
             threateners.append(sqrToPosition(i)); // adds its position to the list
         }
     }
@@ -268,23 +240,21 @@ std::string Board::sqrThreatener(const std::string& position, bool threatenedByW
 }
 
 int Board::positionToSqr(std::string position) {
-    int x = position[0] - 'a';
-    int y = '8' - position[1];
-    // CR: comment
+    int x = position[0] - 'a'; // 'a' is the first column
+    int y = '8' - position[1]; // '8' is the first column
     return x + y * 8;
 }
 
 std::string Board::sqrToPosition(int sqr) {
     char x = (char)('a' + (sqr%8));
     char y = (char)('8' - (sqr/8));
-    // CR: why not append?
-    std::string p = "  ";
-    p[0] = x;
-    p[1] = y;
+    std::string p;
+    p += x;
+    p += y;
     return p;
 }
 
-// CR: why needed when you have the FEN representation?
+// only for testing!!!!!!
 std::string Board::printBoard() {
     std::string print;
     for (int y = 0; y < 8; ++y) {
@@ -292,17 +262,17 @@ std::string Board::printBoard() {
             Piece * piece = this->board[x + y * 8];
             if (piece == nullptr){
                 print += " ";
-                continue;
             }
-            // CR: should be else
-            print += this->board[x + y * 8]->getMark();
+            else{
+                print += this->board[x + y * 8]->getMark();
+            }
         }
         print += "\n";
     }
     return print;
 }
 
-bool Board::move(std::string move) {
+bool Board::move(const std::string & move) {
     bool legal_move = legalMove(move); // is the move legal
     bool legal_eat_move = legalEatMove(move); // is the move a legal eat move
 
@@ -320,7 +290,6 @@ bool Board::move(std::string move) {
     bool boo = this->boardFEN->canBooCastle();
     bool booo = this->boardFEN->canBoooCastle();
 
-    // CR: switch-case
     if (piece->getMark() == 'p' || piece->getMark() == 'P'){ //if it's a pawn
         enPassant = piece->getPath(toPos);// save the path as the en passant
     }
@@ -401,7 +370,7 @@ bool Board::move(std::string move) {
 }
 
 // CR: what other more useful func can you make in this style?
-std::string Board::getLegalMoves(std::string position) {
+std::string Board::getLegalMoves(const std::string & position) {
     Piece * piece = this->board[positionToSqr(position)];
     if (piece == nullptr){ // there is no piece at (position)
         return "";

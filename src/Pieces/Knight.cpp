@@ -16,32 +16,30 @@ bool Knight::canMoveGeo(std::string next_position) {
 }
 
 std::string Knight::getGeoPossibleMoves() {
-    // CR: why like this?
-    std::string positions = "1122334455667788";
-    positions[0] = (char)(this->position[0]+1);
-    positions[1] = (char)(this->position[1]+2);
+    std::string positions; // constant possible positions
+    positions += (char)(this->position[0]+1);
+    positions += (char)(this->position[1]+2);
 
-    positions[2] = (char)(this->position[0]-1);
-    positions[3] = (char)(this->position[1]+2);
+    positions += (char)(this->position[0]-1);
+    positions += (char)(this->position[1]+2);
 
-    positions[4] = (char)(this->position[0]+2);
-    positions[5] = (char)(this->position[1]+1);
+    positions += (char)(this->position[0]+2);
+    positions += (char)(this->position[1]+1);
 
-    positions[6] = (char)(this->position[0]-2);
-    positions[7] = (char)(this->position[1]+1);
+    positions += (char)(this->position[0]-2);
+    positions += (char)(this->position[1]+1);
 
+    positions += (char)(this->position[0]+1);
+    positions += (char)(this->position[1]-2);
 
-    positions[8] = (char)(this->position[0]+1);
-    positions[9] = (char)(this->position[1]-2);
+    positions += (char)(this->position[0]-1);
+    positions += (char)(this->position[1]-2);
 
-    positions[10] = (char)(this->position[0]-1);
-    positions[11] = (char)(this->position[1]-2);
+    positions += (char)(this->position[0]+2);
+    positions += (char)(this->position[1]-1);
 
-    positions[12] = (char)(this->position[0]+2);
-    positions[13] = (char)(this->position[1]-1);
-
-    positions[14] = (char)(this->position[0]-2);
-    positions[15] = (char)(this->position[1]-1);
+    positions += (char)(this->position[0]-2);
+    positions += (char)(this->position[1]-1);
 
     return positions;
 }

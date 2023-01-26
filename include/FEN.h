@@ -11,7 +11,6 @@
 
 class FEN {
 private:
-    // CR: explanation
     //all the positions in a 64 long string, ' ' is an empty sqr and every other piece is represented by its mark from the fen
     std::string positions;
 
@@ -28,9 +27,8 @@ private:
     int halfmoveClock;
     int fullmoveNumber;
 public:
-    // CR: better to receive a const string.
     //constructor
-    FEN(std::string str);
+    FEN(const std::string& fen_string);
     //copy constructor
     FEN(FEN & other);
 

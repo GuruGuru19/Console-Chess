@@ -13,7 +13,7 @@ class Pawn : public Piece{
 public:
     Pawn(std::string start, bool white);
     bool canMoveGeo(std::string next_position) override;
-    bool canMoveGeoToEat(std::string & next_position) override;
+    bool canMoveGeoToEat(std::string next_position) override;
     std::string getPath(std::string next_position) override;
     std::string getGeoPossibleMoves() override;
 };

@@ -2,7 +2,6 @@
 #include "../include/FEN.h"
 #include "../include/Board.h"
 
-// CR: missing tests for update_fen & fen from other fen
 TEST(Test_FEN, correctBuildFEN1Test){
     std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     FEN * fen = new FEN(fen_string);
@@ -55,6 +54,28 @@ TEST(Test_FEN, correctBuildFEN4Test){
     delete fen;
 }
 
-TEST(FENTest, updateTest){
-    // Board::board is private
+TEST(Test_FEN, copyTest){
+    std::string fen_string = "r3k2r/pppq1p1p/2np1bpB/4p3/2PNP2P/1PN3P1/P1P1BP2/1R2K2R b K - 0 14";
+    FEN * fen = new FEN(fen_string);
+    ASSERT_STREQ(fen->getPositions().c_str(), "r   k  rpppq p p  np bpB    p     PNP  P PN   P P P BP   R  K  R");
+    ASSERT_FALSE(fen->isWhiteTurn());
+    ASSERT_TRUE(fen->canWooCastle());
+    ASSERT_FALSE(fen->canWoooCastle());
+    ASSERT_FALSE(fen->canBooCastle());
+    ASSERT_FALSE(fen->canBoooCastle());
+    ASSERT_STREQ(fen->getEnPassant().c_str(), "-");
+
+    FEN * fen2 = new FEN(*fen);
+    EXPECT_STREQ(fen->getPositions().c_str(), "r   k  rpppq p p  np bpB    p     PNP  P PN   P P P BP   R  K  R");
+    EXPECT_FALSE(fen->isWhiteTurn());
+    EXPECT_TRUE(fen->canWooCastle());
+    EXPECT_FALSE(fen->canWoooCastle());
+    EXPECT_FALSE(fen->canBooCastle());
+    EXPECT_FALSE(fen->canBoooCastle());
+    EXPECT_STREQ(fen->getEnPassant().c_str(), "-");
+
+    EXPECT_TRUE(fen != fen2);
+    EXPECT_TRUE(&fen != &fen2);
+
+    delete fen; delete fen2;
 }

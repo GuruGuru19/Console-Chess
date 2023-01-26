@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include "../include/Board.h"
+#include "../include/Pieces/Queen.h"
 #include "Prefixes/BoardPrefix.h"
 
-// CR: missing setPiece test
 TEST(BoardTest, BuildBoard1){
     std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     FEN * fen = new FEN(fen_string);
@@ -274,7 +274,7 @@ TEST_F(BoardPrefix, getLegalMovesTest){
     EXPECT_STREQ(board2->getLegalMoves("f8").c_str(), "e7");// the king is checked and the piece can help !
     EXPECT_STREQ(board2->getLegalMoves("f6").c_str(), "");// the king is checked and the piece can't help  :(
 
-    EXPECT_STREQ(board3->getLegalMoves("h5").c_str(), "d1e2f3g4h3h4h6h7");
+    EXPECT_STREQ(board3->getLegalMoves("h5").c_str(), "g6g4f7f3e8e2d1h3h4h6h7");
 }
 
 TEST(BoardTest, getLegalMovesEnPassantTest){
@@ -282,7 +282,7 @@ TEST(BoardTest, getLegalMovesEnPassantTest){
     FEN * fen = new FEN(fen_string);
     Board * board = new Board(*fen);
     EXPECT_STREQ(board->getLegalMoves("e5").c_str(), "d6"); // En passant
-    EXPECT_STREQ(board->getLegalMoves("a6").c_str(), "b5c4d3e2b7a3a4a5a7b6c6d6e6");
+    EXPECT_STREQ(board->getLegalMoves("a6").c_str(), "b7b5c4d3e2a3a4a5a7b6c6d6e6");
     delete board; delete fen;
 }
 
@@ -317,5 +317,15 @@ TEST(ChessGameTest, itayGameBug){
     FEN * fen = new FEN(fen_string);
     Board * board = new Board(*fen);
     EXPECT_FALSE(board->legalMove("e1f1"));
+    delete board; delete fen;
+}
+
+TEST(BoardTest, setPieceTest){
+    std::string fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    FEN * fen = new FEN(fen_string);
+    Board * board = new Board(*fen);
+    ASSERT_STREQ(board->printBoard().c_str(), "rnbqkbnr\npppppppp\n        \n        \n        \n        \nPPPPPPPP\nRNBQKBNR\n");
+    board->setPiece(new Queen("h1", false));
+    ASSERT_STREQ(board->printBoard().c_str(), "rnbqkbnr\npppppppp\n        \n        \n        \n        \nPPPPPPPP\nRNBQKBNq\n");
     delete board; delete fen;
 }

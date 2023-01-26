@@ -31,7 +31,7 @@ set(include_files
         )
 set(test_files
         tests/TestFEN.cpp
-        tests/TestScreen.cpp tests/TestBoard.cpp tests/Prefixes/BoardPrefix.cpp tests/Prefixes/BoardPrefix.h tests/TestPieces/TestQueen.cpp tests/TestPieces/TestRook.cpp tests/TestPieces/BishopTest.cpp tests/TestChessGame.cpp)
+        tests/TestScreen.cpp tests/TestBoard.cpp tests/Prefixes/BoardPrefix.cpp tests/Prefixes/BoardPrefix.h tests/TestPieces/TestQueen.cpp tests/TestPieces/TestRook.cpp tests/TestPieces/BishopTest.cpp tests/TestChessGame.cpp tests/TestPieces/PawnTest.cpp tests/TestPieces/KnightTest.cpp tests/TestPieces/KingTest.cpp)
 
 
 
@@ -61,7 +61,6 @@ target_link_libraries(
         itai_chess_tests
         GTest::gtest_main
 )
-# CR: you don't need to link itai_chess to gtest. This can cause problems in build&run.
 target_link_libraries(
         itai_chess
         GTest::gtest_main

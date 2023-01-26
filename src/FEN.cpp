@@ -4,11 +4,13 @@
 
 #include "../include/FEN.h"
 
-FEN::FEN(std::string str) { // assumes the str is valid
+FEN::FEN(const std::string& fen_string) { // assumes the str is valid
+    std::string str = fen_string;
+    std::string in_positions = str.substr(0, str.find_first_of(' '));
     int i = 0;
     char c;
     while(this->positions.size() < 64){
-        c = str[i];
+        c = in_positions[i];
         if ((c <= 'z' && c >= 'a')||(c <= 'Z' && c >= 'A')){
             positions += c;
             i++;
@@ -23,68 +25,31 @@ FEN::FEN(std::string str) { // assumes the str is valid
             continue;
         }
     }
-    i++; //for the space
-    // CR: as you know where the sectioning will happen each time in the FEN (in the space), would have tried to section
-    // in start to different parts and give them meaningful names
-    str = str.substr(i);
-    i = 0;
 
-    c = str[i];
-    i++;
+    str = str.substr(str.find_first_of(' ') + 1); // next section
 
+    c = str[0];
     this->whiteTurn = c == 'w';// c can be 'w' or 'b'
-    i++;//for the space
-    str = str.substr(i);
-    i = 0;
 
-    white_oo_castling = false;
-    white_ooo_castling = false;
-    black_oo_castling = false;
-    black_ooo_castling = false;
-    std::string castling = str.substr(0,str.find(' '));
-    // CR: can you think of better way to implement this?
-    if (castling[0] != '-'){
-        while (!castling.empty()){
-            // CR: why use erase and not iterate over the string?
-            c = castling[0];
-            castling.erase(0,1);
-            // CR: could be done in switch-case
-            if (c == 'K'){
-                this->white_oo_castling = true;
-            }
-            else if (c == 'Q'){
-                this->white_ooo_castling = true;
-            }
-            else if (c == 'k'){
-                this->black_oo_castling = true;
-            }
-            else if (c == 'q'){
-                this->black_ooo_castling = true;
-            }
-        }
-    }
-//    if (castling[0] != '-'){
-//        this->white_oo_castling = castling.find('K') < castling.size();
-//        this->white_ooo_castling = castling.find('Q') < castling.size();
-//        this->black_oo_castling = castling.find('k') < castling.size();
-//        this->black_ooo_castling = castling.find('q') < castling.size();
-//    }
-    i += str.find(' ') + 1;//for the space
-    str = str.substr(i);
-    i = 0;
+    str = str.substr(str.find_first_of(' ') + 1); // next section
 
-    c = str[i];
+    std::string castling_rights = str.substr(0, str.find_first_of(' '));
+
+    white_oo_castling = castling_rights.find('K') < castling_rights.size();
+    white_ooo_castling = castling_rights.find('Q') < castling_rights.size();
+    black_oo_castling = castling_rights.find('k') < castling_rights.size();
+    black_ooo_castling = castling_rights.find('q') < castling_rights.size();
+
+    str = str.substr(str.find_first_of(' ') + 1); // next section
+
+    c = str[0];
     if (c == '-'){
         this->enPassant = "-";
-        i++;
     } else{
-        this->enPassant = str.substr(i, 2);
-        i+=2;
+        this->enPassant = str.substr(0, 2);
     }
 
-    i++;//for the space
-    str = str.substr(i);
-    i = 0;
+    str = str.substr(str.find_first_of(' ') + 1); // next section
 
     int space = str.find(' ');
     std::string halfmove_clock = str.substr(0,space);

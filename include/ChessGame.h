@@ -38,7 +38,7 @@ private:
     /**
     * @return if you currently need to crown a pawn
     */
-    std::string Crowning();
+    std::string pawnNeedCrowning();
 
     /**
     * @return if you currently the king is mated
